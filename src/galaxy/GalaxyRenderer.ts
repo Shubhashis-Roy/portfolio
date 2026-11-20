@@ -489,15 +489,19 @@ export class GalaxyRenderer {
     }
     ctx.globalAlpha = 1;
 
-    // Shooting stars (every 1–3 s, only where the sky is bright enough)
+    // Shooting stars (every ~0.3–1 s, sometimes in pairs, only where the sky is bright enough)
     if (animate) {
       if (t > this.nextShot) {
-        const sy = Math.random() * H * (this.tall ? 1 : 0.6);
-        if (this.intensityAt(sy, secs) > 0.15) {
-          const ang = 0.32 + Math.random() * 0.3;
-          this.shots.push({ x: W * (0.25 + Math.random() * 0.75), y: sy, vx: -Math.cos(ang) * 950, vy: Math.sin(ang) * 950, life: 0, max: 0.8 + Math.random() * 0.5 });
+        const n = Math.random() < 0.25 ? 2 : 1;
+        for (let j = 0; j < n; j++) {
+          const sy = Math.random() * H * (this.tall ? 1 : 0.8);
+          if (this.intensityAt(sy, secs) > 0.1) {
+            const ang = 0.28 + Math.random() * 0.36;
+            const v = 800 + Math.random() * 400;
+            this.shots.push({ x: W * (0.15 + Math.random() * 0.85), y: sy, vx: -Math.cos(ang) * v, vy: Math.sin(ang) * v, life: 0, max: 0.7 + Math.random() * 0.6 });
+          }
         }
-        this.nextShot = t + 0.9 + Math.random() * 2.2;
+        this.nextShot = t + 0.3 + Math.random() * 0.8;
       }
       for (let i = this.shots.length - 1; i >= 0; i--) {
         const s = this.shots[i];
