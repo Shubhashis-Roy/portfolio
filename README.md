@@ -28,7 +28,8 @@ src/components/     page sections; Galaxy.tsx + Projects.tsx/CaseStudyModal.tsx 
 src/components/primitives.tsx   shared building blocks (Container, Section, Eyebrow, Tags, …)
 src/components/ui/  shadcn/ui components (Button, Badge, Card, Dialog), restyled to the design
 src/components/mockups/   decorative concept mockups for each project
-src/galaxy/GalaxyRenderer.ts   canvas starfield, black hole and galaxy animation
+src/galaxy/GalaxyRenderer.ts   canvas starfield, scroll-driven black hole, astronaut and shooting stars
+public/earth.jpg               Earth horizon photo at the bottom of Contact
 public/fonts/       self-hosted Inter, JetBrains Mono, Space Grotesk
 ```
 

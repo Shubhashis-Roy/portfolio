@@ -16,8 +16,20 @@ function Social({ url, label }: { url: string; label: string }) {
 
 export default function Contact() {
   return (
-    <section id="contact" data-galaxy={0.85} data-gx="contact" className="pt-[200px] pb-40 text-center max-md:pt-[130px] max-md:pb-[110px]">
-      <Container>
+    <section id="contact" data-galaxy={0.85} data-gx="contact" className="relative overflow-hidden pt-[200px] pb-[640px] text-center max-md:pt-[130px] max-md:pb-[500px]">
+      {/* Earth horizon rising at the end of the page; the galaxy renderer keeps the black hole above it. */}
+      <img
+        data-earth
+        src="/earth.jpg"
+        alt=""
+        aria-hidden
+        width={982}
+        height={556}
+        loading="lazy"
+        decoding="async"
+        className="pointer-events-none absolute bottom-0 left-1/2 z-0 block h-auto w-[max(100%,1200px)] max-w-none -translate-x-1/2 [mask-image:linear-gradient(to_bottom,transparent_0%,transparent_20%,#000_40%)] max-md:w-[860px]"
+      />
+      <Container className="relative z-1">
         <Eyebrow center className="reveal">05 — Contact</Eyebrow>
         <h2 className="reveal-text mx-auto my-0 max-w-[1000px] font-display text-[clamp(48px,7vw,108px)] leading-[0.98] font-semibold tracking-[-0.035em]">
           Let’s build something{' '}

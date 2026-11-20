@@ -1,16 +1,17 @@
 /**
- * Canvas 2D galaxy background: starfield, nebulae, rotating black hole (hero),
- * face-on spiral galaxy (contact), cosmic dust and shooting stars.
+ * Canvas 2D galaxy background: starfield, nebulae, a Gargantua-style black hole
+ * that drifts with scroll progress, an astronaut falling toward it, a moon,
+ * cosmic dust and shooting stars. (The Earth horizon is an <img> in Contact.)
  *
  * Ported 1:1 from the original design export. Sections opt in with
  * `data-galaxy="<intensity 0..1>"` and `data-gx="<name>"` attributes.
  */
 
+import { buildAstronautSprite } from './astronaut';
+
 type Star = { x: number; y: number; z: number; r: number; c: string; tw: boolean; ph: number; sp: number };
 type Dust = { x: number; y: number; vx: number; vy: number; r: number; a: number; c: string };
-type GalStar = { r: number; a: number; dx: number; dy: number; s: number; c: string; f: number };
-type DiskP = { r: number; a: number; w: number; h: number; b: number; ci: number };
-type RingP = { p: number; a: number; w: number; b: number; ci: number };
+type DiskP = { r: number; a: number; w: number; h: number; b: number; ci: number; len: number };
 type Shot = { x: number; y: number; vx: number; vy: number; life: number; max: number };
 type Sec = { c: number; v: number };
 
@@ -27,18 +28,20 @@ export class GalaxyRenderer {
   private W = 1; private H = 1; private tall = false;
   private stars: Star[] = [];
   private dust: Dust[] = [];
-  private gal: GalStar[] = [];
   private sections: HTMLElement[] = [];
   private shots: Shot[] = [];
   private nextShot = 2.5;
   private time = 0;
   private lastNow = performance.now();
-  // black hole
-  private bhCols = ['255,243,224', '242,184,96', '224,118,58', '140,66,34'];
-  private bhLv = 7;
-  private disk: DiskP[] | null = null;
-  private ring: RingP[] = [];
-  private bk: number[][] = [];
+  // black hole (smoothed scroll progress drives its drift and the astronaut's fall)
+  private pS: number | undefined;
+  private earthEl: HTMLElement | null = null;
+  private gCols = ['255,248,236', '255,224,178', '246,172,108', '214,112,60', '122,54,28'];
+  private gLv = 8;
+  private gDisk: DiskP[] | null = null;
+  private gk: number[][] = [];
+  private astro: HTMLCanvasElement | null = null;
+  private astroTint: HTMLCanvasElement | null = null;
 
   constructor(
     private cv: HTMLCanvasElement,
@@ -52,7 +55,6 @@ export class GalaxyRenderer {
     window.addEventListener('pointermove', this.onMove, { passive: true });
     window.addEventListener('resize', this.onResize);
     window.addEventListener('scroll', this.onScroll, { passive: true });
-    this.buildGalaxy();
     this.resize();
     const loop = (now: number) => {
       if (this.dead) return;
@@ -113,55 +115,38 @@ export class GalaxyRenderer {
     if (!this.animating) requestAnimationFrame((t) => this.frame(t));
   }
 
-  private buildGalaxy() {
-    const N = 2600, arms = 2;
-    this.gal = [];
-    const g = () => (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;
-    for (let i = 0; i < N; i++) {
-      const r = Math.pow(Math.random(), 1.35);
-      const arm = i % arms;
-      const spread = 0.05 + 0.16 * r;
-      let col: string;
-      if (r < 0.12) col = '255,246,222';
-      else if (r < 0.4) col = Math.random() < 0.7 ? '255,214,90' : '255,244,214';
-      else col = Math.random() < 0.55 ? '255,150,30' : Math.random() < 0.6 ? '242,184,96' : '255,255,255';
-      this.gal.push({ r, a: arm * Math.PI + r * 5.2 + g() * 0.35, dx: g() * spread, dy: g() * spread, s: 0.5 + Math.random() * (r < 0.2 ? 1.6 : 1.1), c: col, f: Math.random() * TAU });
-    }
-  }
-
-  /* ---------- Black hole: shadow, photon ring, lensed halo, Keplerian accretion disk ---------- */
-  private buildBlackHole() {
+  /* ---------- Gargantua-style black hole: far side of the disk lensed over and under the shadow ---------- */
+  private buildGargantua() {
     const gauss = () => (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;
     const disk: DiskP[] = [];
-    for (let i = 0; i < 5200; i++) {
-      const r = 1.55 + Math.pow(Math.random(), 1.7) * 2.5;
-      const ci = r < 1.95 ? 0 : r < 2.5 ? (Math.random() < 0.6 ? 1 : 0) : r < 3.3 ? (Math.random() < 0.7 ? 2 : 1) : Math.random() < 0.6 ? 3 : 2;
-      let b = Math.max(0.18, Math.min(1, 1.2 - (r - 1.55) / 2.4));
-      if (Math.random() < 0.16) b *= 0.35; // dusty lanes
-      disk.push({ r, a: Math.random() * TAU, w: 0.62 * Math.pow(1.55 / r, 1.5), h: gauss() * 0.045 * r, b, ci });
+    for (let i = 0; i < 6500; i++) {
+      const r = 1.5 + Math.pow(Math.random(), 1.6) * 4.6;
+      const q = Math.random();
+      const ci = r < 1.9 ? 0 : r < 2.6 ? (q < 0.55 ? 1 : 0) : r < 3.5 ? (q < 0.6 ? 2 : 1) : r < 4.6 ? (q < 0.6 ? 3 : 2) : q < 0.6 ? 4 : 3;
+      let b = Math.max(0.12, Math.min(1, 1.25 - (r - 1.5) / 3.8));
+      b *= 0.62 + 0.38 * Math.sin(r * 10.5 + Math.random() * 0.8);
+      if (Math.random() < 0.18) b *= 0.3; // dusty lanes
+      disk.push({ r, a: Math.random() * TAU, w: 0.5 * Math.pow(1.5 / r, 1.5), h: gauss() * 0.07 * r, b, ci, len: 0.06 + Math.random() * 0.22 });
     }
-    this.disk = disk;
-    this.ring = [];
-    for (let i = 0; i < 2600; i++) {
-      const p = 1.06 + Math.pow(Math.random(), 2.2) * 0.8;
-      this.ring.push({ p, a: Math.random() * TAU, w: 0.62 * Math.pow(1.55 / (1.55 + (p - 1.06) * 3), 1.5), b: Math.max(0.15, 1 - (p - 1.06) / 0.9), ci: p < 1.3 ? 0 : Math.random() < 0.6 ? 1 : 0 });
-    }
-    const nb = 2 * this.bhCols.length * this.bhLv;
-    this.bk = [];
-    for (let i = 0; i < nb; i++) this.bk.push([]);
+    this.gDisk = disk;
+    const n = 3 * this.gCols.length * this.gLv;
+    this.gk = [];
+    for (let i = 0; i < n; i++) this.gk.push([]);
   }
 
-  private strokeBuckets(ctx: CanvasRenderingContext2D, layer: number, lw: number) {
-    const C = this.bhCols.length, L = this.bhLv;
+  /** Strokes one layer of batched disk streaks (bucketed by colour and alpha level). */
+  private gStroke(ctx: CanvasRenderingContext2D, layer: number, lw: number) {
+    const C = this.gCols.length, L = this.gLv;
+    ctx.lineWidth = lw;
+    ctx.lineCap = 'round';
     for (let ci = 0; ci < C; ci++) {
+      ctx.strokeStyle = 'rgb(' + this.gCols[ci] + ')';
       for (let li = 0; li < L; li++) {
-        const arr = this.bk[layer * C * L + ci * L + li];
+        const arr = this.gk[layer * C * L + ci * L + li];
         if (!arr.length) continue;
         ctx.globalAlpha = (li + 1) / L;
-        ctx.strokeStyle = 'rgb(' + this.bhCols[ci] + ')';
-        ctx.lineWidth = lw;
         ctx.beginPath();
-        for (let j = 0; j < arr.length; j += 4) { ctx.moveTo(arr[j], arr[j + 1]); ctx.lineTo(arr[j + 2], arr[j + 3]); }
+        for (let j = 0; j < arr.length; j += 6) { ctx.moveTo(arr[j], arr[j + 1]); ctx.lineTo(arr[j + 2], arr[j + 3]); ctx.lineTo(arr[j + 4], arr[j + 5]); }
         ctx.stroke();
         arr.length = 0;
       }
@@ -169,101 +154,154 @@ export class GalaxyRenderer {
     ctx.globalAlpha = 1;
   }
 
-  private drawBlackHole(ctx: CanvasRenderingContext2D, cx: number, cy: number, rh: number, rot: number, tilt: number, A: number, t: number) {
-    if (!this.disk) this.buildBlackHole();
-    const ext = rh * 5;
-    if (cy + ext < -60 || cy - ext > this.H + 60 || A <= 0.01) return;
+  private drawGargantua(ctx: CanvasRenderingContext2D, cx: number, cy: number, rh: number, rot: number, tau: number, A: number, t: number) {
+    if (!this.gDisk) this.buildGargantua();
+    if (cy + rh * 4 < -60 || cy - rh * 4 > this.H + 60 || A <= 0.01) return;
     const cr = Math.cos(rot), sr = Math.sin(rot);
-    const C = this.bhCols.length, L = this.bhLv;
-    const X = (u: number, v: number) => cx + u * cr - v * sr;
-    const Y = (u: number, v: number) => cy + u * sr + v * cr;
-    ctx.lineCap = 'round';
-
-    // 1. Ambient warm halo
-    const halo = ctx.createRadialGradient(cx, cy, rh, cx, cy, rh * 5.2);
-    halo.addColorStop(0, 'rgba(255,226,180,' + 0.2 * A + ')');
-    halo.addColorStop(0.35, 'rgba(224,118,58,' + 0.07 * A + ')');
-    halo.addColorStop(1, 'rgba(224,118,58,0)');
+    const C = this.gCols.length, L = this.gLv, gk = this.gk;
+    const pt = [0, 0];
+    // Disk point (r, phi, thickness) -> screen. mode 0: primary image (far side lifted over the top), mode 1: secondary image under the shadow
+    const map = (r: number, ph: number, hh: number, mode: 0 | 1) => {
+      const u = r * Math.cos(ph), s = Math.sin(ph);
+      const vd = (r * s + hh) * tau;
+      let v = vd;
+      if (mode === 1) {
+        const p2 = 1.06 + (r - 1.5) * 0.24;
+        v = Math.sqrt(Math.max(0, p2 * p2 - u * u)) * 0.95 + hh * 0.3;
+      } else if (s < 0) {
+        const p1 = 1.14 + (r - 1.5) * 0.44;
+        if (Math.abs(u) < p1) v = Math.min(vd, -Math.sqrt(p1 * p1 - u * u) * 0.96 + hh * 0.5);
+      }
+      pt[0] = cx + (u * cr - v * sr) * rh;
+      pt[1] = cy + (u * sr + v * cr) * rh;
+    };
+    const halo = ctx.createRadialGradient(cx, cy, rh, cx, cy, rh * 6);
+    halo.addColorStop(0, 'rgba(255,206,150,' + 0.18 * A + ')');
+    halo.addColorStop(0.35, 'rgba(214,112,60,' + 0.06 * A + ')');
+    halo.addColorStop(1, 'rgba(214,112,60,0)');
     ctx.fillStyle = halo;
-    ctx.fillRect(cx - rh * 5.2, cy - rh * 5.2, rh * 10.4, rh * 10.4);
-
-    // Disk glow (half = -1 back / +1 front)
-    const diskGlow = (half: number) => {
-      ctx.save();
-      ctx.translate(cx, cy); ctx.rotate(rot);
-      ctx.beginPath(); ctx.rect(-rh * 5, half < 0 ? -rh * 5 : 0, rh * 10, rh * 5); ctx.clip();
-      ctx.scale(1, tilt);
-      const g = ctx.createRadialGradient(0, 0, rh * 1.35, 0, 0, rh * 4.2);
-      g.addColorStop(0, 'rgba(255,240,215,' + 0.55 * A + ')');
-      g.addColorStop(0.18, 'rgba(242,184,96,' + 0.32 * A + ')');
-      g.addColorStop(0.55, 'rgba(224,118,58,' + 0.12 * A + ')');
-      g.addColorStop(1, 'rgba(140,66,34,0)');
-      ctx.fillStyle = g;
-      ctx.beginPath(); ctx.arc(0, 0, rh * 4.2, 0, TAU); ctx.fill();
+    ctx.fillRect(cx - rh * 6, cy - rh * 6, rh * 12, rh * 12);
+    const band = (half: number, k2: number) => {
+      ctx.save(); ctx.translate(cx, cy); ctx.rotate(rot);
+      ctx.beginPath(); ctx.rect(-rh * 7, half < 0 ? -rh * 7 : 0, rh * 14, rh * 7); ctx.clip();
+      ctx.scale(1, tau * 1.7);
+      const g = ctx.createRadialGradient(0, 0, rh * 1.3, 0, 0, rh * 6.2);
+      g.addColorStop(0, 'rgba(255,240,214,' + 0.6 * A * k2 + ')');
+      g.addColorStop(0.16, 'rgba(255,214,160,' + 0.38 * A * k2 + ')');
+      g.addColorStop(0.5, 'rgba(214,112,60,' + 0.14 * A * k2 + ')');
+      g.addColorStop(1, 'rgba(122,54,28,0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, rh * 6.2, 0, TAU); ctx.fill();
       ctx.restore();
     };
-    diskGlow(-1);
-
-    // 2. Lensed halo (far side of disk bent over and under the shadow)
-    ctx.save();
-    ctx.translate(cx, cy); ctx.rotate(rot);
-    const rings: [number, number, number][] = [[1.1, 0.035, 0.55], [1.22, 0.09, 0.26], [1.42, 0.17, 0.12], [1.7, 0.28, 0.05]];
-    for (const q of rings) {
-      ctx.lineWidth = rh * q[1];
-      ctx.strokeStyle = 'rgba(255,236,205,' + q[2] * A + ')';
-      ctx.beginPath(); ctx.arc(0, 0, rh * q[0], Math.PI, 2 * Math.PI); ctx.stroke();
-      ctx.strokeStyle = 'rgba(242,184,96,' + q[2] * 0.55 * A + ')';
-      ctx.beginPath(); ctx.arc(0, 0, rh * q[0] * 0.97, 0, Math.PI); ctx.stroke();
+    /** [radius, width, alpha, rgb] arcs; lo = under the shadow, otherwise over the top. */
+    const arcs = (lo: boolean, list: [number, number, number, string][]) => {
+      ctx.save(); ctx.translate(cx, cy); ctx.rotate(rot);
+      for (const q of list) {
+        ctx.lineWidth = rh * q[1];
+        ctx.strokeStyle = 'rgba(' + q[3] + ',' + q[2] * A + ')';
+        ctx.beginPath();
+        if (lo) ctx.ellipse(0, 0, rh * q[0], rh * q[0] * 0.95, 0, 0.12, Math.PI - 0.12);
+        else ctx.ellipse(0, 0, rh * q[0], rh * q[0] * 0.96, 0, Math.PI + 0.04, 2 * Math.PI - 0.04);
+        ctx.stroke();
+      }
+      ctx.restore();
+    };
+    // 1. Far side: disk glow + lensed arc over the top
+    band(-1, 1);
+    arcs(false, [[1.2, 0.14, 0.5, '255,240,214'], [1.42, 0.3, 0.3, '255,214,160'], [1.78, 0.46, 0.13, '246,172,108'], [2.3, 0.6, 0.05, '214,112,60']]);
+    for (const p of this.gDisk!) {
+      const ph = p.a - p.w * t;
+      const s = Math.sin(ph), c = Math.cos(ph);
+      const D = 1 - 0.5 * c; // Doppler beaming
+      const dl = Math.min(0.5, p.len + p.w * 0.35);
+      const front = s > 0;
+      const al = p.b * D * A * 0.5 * (front ? 1 : 0.85);
+      if (al >= 0.03) {
+        const li = Math.min(L - 1, Math.floor(al * L));
+        const arr = gk[(front ? 2 : 0) * C * L + p.ci * L + li];
+        map(p.r, ph, p.h, 0); arr.push(pt[0], pt[1]);
+        map(p.r, ph + dl * 0.5, p.h, 0); arr.push(pt[0], pt[1]);
+        map(p.r, ph + dl, p.h, 0); arr.push(pt[0], pt[1]);
+      }
+      if (!front && p.r < 4.2) {
+        const al2 = p.b * D * A * 0.22;
+        const p2 = 1.06 + (p.r - 1.5) * 0.24;
+        if (al2 >= 0.03 && Math.abs(p.r * c) < p2) {
+          const arr2 = gk[C * L + p.ci * L + Math.min(L - 1, Math.floor(al2 * L))];
+          map(p.r, ph, p.h, 1); arr2.push(pt[0], pt[1]);
+          map(p.r, ph + dl * 0.5, p.h, 1); arr2.push(pt[0], pt[1]);
+          map(p.r, ph + dl, p.h, 1); arr2.push(pt[0], pt[1]);
+        }
+      }
     }
-    ctx.restore();
-
-    // 3. Particles: ring (lensed) + disk; Keplerian speed, Doppler-beamed brightness
-    for (const p of this.ring) {
-      const a = p.a + p.w * t;
-      const s = Math.sin(a), c = Math.cos(a);
-      const da = Math.min(0.16, p.w * 0.28 + 0.03);
-      const u = p.p * c * rh, v = p.p * s * 0.97 * rh;
-      const u2 = p.p * Math.cos(a - da) * rh, v2 = p.p * Math.sin(a - da) * 0.97 * rh;
-      const al = p.b * (s < 0 ? 1 : 0.5) * (1 + 0.35 * c) * A * 0.8;
-      if (al < 0.04) continue;
-      const li = Math.max(0, Math.min(L - 1, Math.floor(al * L)));
-      this.bk[p.ci * L + li].push(X(u, v), Y(u, v), X(u2, v2), Y(u2, v2));
-    }
-    for (const p of this.disk!) {
-      const a = p.a + p.w * t;
-      const s = Math.sin(a), c = Math.cos(a);
-      const da = Math.min(0.14, p.w * 0.24 + 0.02);
-      const u = p.r * c * rh, v = (p.r * s * tilt + p.h * tilt * 2.2) * rh;
-      const u2 = p.r * Math.cos(a - da) * rh, v2 = (p.r * Math.sin(a - da) * tilt + p.h * tilt * 2.2) * rh;
-      const front = s > 0 ? 1 : 0;
-      const al = p.b * (1 + 0.55 * c) * A * (front ? 1 : 0.8) * 0.75;
-      if (al < 0.04) continue;
-      const li = Math.max(0, Math.min(L - 1, Math.floor(al * L)));
-      this.bk[front * C * L + p.ci * L + li].push(X(u, v), Y(u, v), X(u2, v2), Y(u2, v2));
-    }
-    this.strokeBuckets(ctx, 0, Math.max(0.8, rh / 95));
-
-    // 4. Event horizon shadow
+    this.gStroke(ctx, 0, Math.max(0.9, rh / 80));
+    // 2. Event horizon shadow
     ctx.globalCompositeOperation = 'source-over';
-    const sh = ctx.createRadialGradient(cx, cy, rh * 0.9, cx, cy, rh * 1.06);
-    sh.addColorStop(0, 'rgba(2,2,2,1)');
-    sh.addColorStop(0.75, 'rgba(2,2,2,1)');
-    sh.addColorStop(1, 'rgba(2,2,2,0)');
-    ctx.fillStyle = sh;
-    ctx.beginPath(); ctx.arc(cx, cy, rh * 1.06, 0, TAU); ctx.fill();
+    const sh = ctx.createRadialGradient(cx, cy - rh * 0.2, 0, cx, cy, rh * 1.04);
+    sh.addColorStop(0, 'rgba(30,12,6,1)');
+    sh.addColorStop(0.85, 'rgba(6,3,2,1)');
+    sh.addColorStop(1, 'rgba(6,3,2,0)');
+    ctx.fillStyle = sh; ctx.beginPath(); ctx.arc(cx, cy, rh * 1.04, 0, TAU); ctx.fill();
     ctx.globalCompositeOperation = 'lighter';
-
-    // 5. Photon ring
-    ctx.lineWidth = Math.max(1, rh * 0.014);
-    ctx.strokeStyle = 'rgba(255,246,230,' + 0.95 * A + ')';
-    ctx.beginPath(); ctx.arc(cx, cy, rh * 1.02, 0, TAU); ctx.stroke();
-    ctx.lineWidth = rh * 0.06;
-    ctx.strokeStyle = 'rgba(255,226,180,' + 0.16 * A + ')';
+    // 3. Photon ring
+    ctx.lineWidth = Math.max(1, rh * 0.012); ctx.strokeStyle = 'rgba(255,246,232,' + 0.9 * A + ')';
+    ctx.beginPath(); ctx.arc(cx, cy, rh * 1.015, 0, TAU); ctx.stroke();
+    ctx.lineWidth = rh * 0.05; ctx.strokeStyle = 'rgba(255,214,160,' + 0.14 * A + ')';
     ctx.beginPath(); ctx.arc(cx, cy, rh * 1.03, 0, TAU); ctx.stroke();
+    // 4. Secondary image under the shadow
+    arcs(true, [[1.1, 0.06, 0.28, '255,236,210'], [1.28, 0.16, 0.12, '246,172,108'], [1.55, 0.26, 0.04, '214,112,60']]);
+    this.gStroke(ctx, 1, Math.max(0.8, rh / 95));
+    // 5. Near side of the disk crosses in front
+    band(1, 1.15);
+    this.gStroke(ctx, 2, Math.max(1, rh / 70));
+  }
 
-    // 6. Near side of the disk crosses in front of the shadow
-    diskGlow(1);
-    this.strokeBuckets(ctx, 1, Math.max(0.9, rh / 85));
+  /** Astronaut spiralling toward the black hole as scroll progress `p` goes 0 → 1; slows, stretches and redshifts, never crosses. */
+  private drawAstronaut(ctx: CanvasRenderingContext2D, bx: number, by: number, rh: number, p: number, t: number, narrow: boolean) {
+    const a = 1 - Math.pow(1 - p, 2.4);
+    const q = a * a;
+    // Starts up and to the left of the black hole (in the gap above the headline), then spirals in
+    const th = -2.53 - a * Math.PI * 1.45;
+    const dist = rh * (1.2 + 1.75 * (1 - a));
+    const x = bx + Math.cos(th) * dist + Math.sin(t * 0.5) * 8 * (1 - a);
+    const y = by + Math.sin(th) * dist * 0.82 + Math.cos(t * 0.4) * 6 * (1 - a);
+    const s = (narrow ? 24 : 42) * (0.3 + 0.7 * (1 - a)) * Math.max(0.7, Math.min(1.15, rh / 140));
+    if (y < -s * 3 || y > this.H + s * 3) return;
+    const ra = Math.atan2(by - y, bx - x);
+    const spin = t * 0.18 + a * 5.5 + 0.55; // slow tumble; starts tilted like a floating EVA pose
+    const D = s * 2.7; // on-screen sprite size
+
+    // Per-frame lighting in sprite space: shadow on the far side, warm rim from the accretion disk, redshift near the horizon
+    if (!this.astro) this.astro = buildAstronautSprite();
+    if (!this.astroTint) { this.astroTint = document.createElement('canvas'); this.astroTint.width = this.astroTint.height = 256; }
+    const tc = this.astroTint, g = tc.getContext('2d')!;
+    g.globalCompositeOperation = 'source-over';
+    g.clearRect(0, 0, 256, 256);
+    g.drawImage(this.astro, 0, 0, 256, 256);
+    g.globalCompositeOperation = 'source-atop';
+    const la = ra - spin, lx = Math.cos(la) * 128, ly = Math.sin(la) * 128;
+    const lg = g.createLinearGradient(128 - lx, 128 - ly, 128 + lx, 128 + ly);
+    lg.addColorStop(0, 'rgba(0,0,0,0.45)');
+    lg.addColorStop(0.55, 'rgba(0,0,0,0)');
+    lg.addColorStop(0.8, 'rgba(255,180,110,0.12)');
+    lg.addColorStop(1, 'rgba(255,170,90,' + (0.45 + 0.25 * q) + ')');
+    g.fillStyle = lg; g.fillRect(0, 0, 256, 256);
+    if (q > 0.01) { g.fillStyle = 'rgba(225,110,50,' + q * 0.55 + ')'; g.fillRect(0, 0, 256, 256); }
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const gl = ctx.createRadialGradient(x, y, 0, x, y, s * 1.8);
+    gl.addColorStop(0, 'rgba(255,200,140,' + (0.04 + 0.1 * q) + ')');
+    gl.addColorStop(1, 'rgba(255,200,140,0)');
+    ctx.fillStyle = gl; ctx.fillRect(x - s * 1.8, y - s * 1.8, s * 3.6, s * 3.6);
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1 - 0.45 * q;
+    ctx.translate(x, y);
+    ctx.rotate(ra); ctx.scale(1 + 1.1 * q, 1 - 0.4 * q); ctx.rotate(-ra); // tidal stretch toward the hole
+    ctx.rotate(spin);
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(tc, -D / 2, -D / 2, D, D);
+    ctx.restore();
   }
 
   private drawMoon(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, k: number) {
@@ -297,35 +335,6 @@ export class GalaxyRenderer {
       }
     }
     return 1;
-  }
-
-  private drawGalaxy(ctx: CanvasRenderingContext2D, cx: number, cy: number, R: number, tilt: number, rot: number, alpha: number, t: number, dir: number) {
-    if (cy + R < -80 || cy - R > this.H + 80 || alpha <= 0.01) return;
-    const halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.25);
-    halo.addColorStop(0, 'rgba(236,160,96,' + 0.16 * alpha + ')');
-    halo.addColorStop(0.45, 'rgba(224,118,58,' + 0.05 * alpha + ')');
-    halo.addColorStop(1, 'rgba(224,118,58,0)');
-    ctx.fillStyle = halo;
-    ctx.fillRect(cx - R * 1.3, cy - R * 1.3, R * 2.6, R * 2.6);
-    const cr = Math.cos(rot), sr = Math.sin(rot);
-    for (const p of this.gal) {
-      const th = p.a + (dir * t * 0.045) / (0.28 + p.r);
-      const lx = (Math.cos(th) * p.r + p.dx) * R;
-      const ly = (Math.sin(th) * p.r + p.dy) * R * tilt;
-      const x = cx + lx * cr - ly * sr;
-      const y = cy + lx * sr + ly * cr;
-      const fl = 0.75 + 0.25 * Math.sin(t * 1.3 + p.f);
-      ctx.globalAlpha = Math.min(1, (0.25 + 0.75 * (1 - p.r)) * alpha * fl);
-      ctx.fillStyle = 'rgb(' + p.c + ')';
-      ctx.fillRect(x, y, p.s, p.s);
-    }
-    ctx.globalAlpha = 1;
-    const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 0.32);
-    core.addColorStop(0, 'rgba(255,248,225,' + 0.55 * alpha + ')');
-    core.addColorStop(0.25, 'rgba(242,184,96,' + 0.22 * alpha + ')');
-    core.addColorStop(1, 'rgba(224,118,58,0)');
-    ctx.fillStyle = core;
-    ctx.beginPath(); ctx.ellipse(cx, cy, R * 0.34, R * 0.34 * Math.max(tilt, 0.5), rot, 0, TAU); ctx.fill();
   }
 
   private blob(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, col: string, a: number) {
@@ -404,21 +413,44 @@ export class GalaxyRenderer {
     }
     ctx.globalAlpha = 1;
 
-    // Rotating black hole anchored to hero; face-on galaxy behind contact
+    // Black hole stays in the sky and drifts with scroll progress; the astronaut falls toward it; Earth rises at the end
     const narrow = W < 860;
     const h = byKind.hero;
-    if (h) {
-      const rh = narrow ? Math.min(W * 0.3, 130) : Math.min(h.width * 0.19, h.height * 0.29, 300);
-      const cx = h.left + h.width * (narrow ? 0.55 : 0.64) - mx * 26;
-      const cy = h.top * 0.55 + h.height * (narrow ? 0.34 : 0.5) - my * 18;
-      this.drawBlackHole(ctx, cx, cy, rh, 0.4 + mx * 0.04, 0.2 + my * 0.03, (narrow ? 0.55 : 0.9) * k, t);
-      if (!narrow) this.drawMoon(ctx, h.left + h.width * 0.93 - mx * 50, h.top * 0.5 + h.height * 0.15 - my * 36, 22, k);
+    const sm = (x: number, a: number, b: number) => { const q = Math.max(0, Math.min(1, (x - a) / (b - a))); return q * q * (3 - 2 * q); };
+    const docH = Math.max(document.documentElement.scrollHeight || 0, document.body ? document.body.scrollHeight : 0);
+    const prog = this.tall ? 0 : Math.max(0, Math.min(1, sc / Math.max(1, docH - H)));
+    if (this.pS === undefined) this.pS = prog;
+    this.pS += (prog - this.pS) * (animate ? 0.08 : 1);
+    const p = this.pS;
+    let bx: number, by: number, brh: number;
+    if (this.tall || !h) {
+      const hr = h || { left: 0, top: 0, width: W, height: H };
+      brh = narrow ? Math.min(W * 0.2, 80) : Math.min(hr.width * 0.105, hr.height * 0.19, 165);
+      bx = hr.left + hr.width * (narrow ? 0.6 : 0.66);
+      by = hr.top + hr.height * (narrow ? 0.3 : 0.47);
+    } else {
+      const rh0 = narrow ? Math.min(W * 0.2, 80) : Math.min(W * 0.105, H * 0.2, 165);
+      brh = rh0 * (1 - 0.12 * sm(p, 0, 0.3) - 0.32 * sm(p, 0.72, 1));
+      bx = W * ((narrow ? 0.6 : 0.66) + 0.06 * sm(p, 0, 0.25) - (narrow ? 0.1 : 0.22) * sm(p, 0.72, 1));
+      by = H * ((narrow ? 0.3 : 0.47) - 0.05 * sm(p, 0, 0.25) - (narrow ? 0.06 : 0.17) * sm(p, 0.72, 1));
     }
-    const c = byKind.contact;
-    if (c) {
-      const R = Math.min(c.width * 0.34, 420);
-      this.drawGalaxy(ctx, c.left + c.width * 0.5 - mx * 20, c.top * 0.85 + c.height * 0.5 - my * 16, R, 0.78, 0.3, 0.62 * k, t * 0.7, -1);
+    bx -= mx * 26; by -= my * 18;
+    // Keep the black hole above Earth's horizon once the planet scrolls into view
+    if (!this.tall) {
+      if (!this.earthEl?.isConnected) this.earthEl = this.root.querySelector<HTMLElement>('[data-earth]');
+      if (this.earthEl) {
+        const er = this.earthEl.getBoundingClientRect();
+        const hz = er.top + er.height * 0.45;
+        if (hz < H + brh * 3) {
+          brh = Math.min(brh, Math.max(26, hz / 4.8));
+          by = Math.max(brh * 2.5, Math.min(by, hz - brh * 2.1));
+        }
+      }
     }
+    const bhA = k * (narrow ? 0.6 : 1) * (0.42 + 0.58 * this.intensityAt(by, secs));
+    this.drawGargantua(ctx, bx, by, brh, -0.05 + mx * 0.03, 0.075 + my * 0.015, bhA, t);
+    if (h && !narrow) this.drawMoon(ctx, h.left + h.width * 0.93 - mx * 50, h.top * 0.5 + h.height * 0.15 - my * 36, 20, k);
+    this.drawAstronaut(ctx, bx, by, brh, p, t, narrow);
 
     // Cosmic dust
     for (const d of this.dust) {
@@ -435,15 +467,15 @@ export class GalaxyRenderer {
     }
     ctx.globalAlpha = 1;
 
-    // Shooting stars (rare, only where the sky is bright enough)
+    // Shooting stars (every 1–3 s, only where the sky is bright enough)
     if (animate) {
       if (t > this.nextShot) {
         const sy = Math.random() * H * (this.tall ? 1 : 0.6);
-        if (this.intensityAt(sy, secs) > 0.3) {
+        if (this.intensityAt(sy, secs) > 0.15) {
           const ang = 0.32 + Math.random() * 0.3;
           this.shots.push({ x: W * (0.25 + Math.random() * 0.75), y: sy, vx: -Math.cos(ang) * 950, vy: Math.sin(ang) * 950, life: 0, max: 0.8 + Math.random() * 0.5 });
         }
-        this.nextShot = t + 4 + Math.random() * 6;
+        this.nextShot = t + 0.9 + Math.random() * 2.2;
       }
       for (let i = this.shots.length - 1; i >= 0; i--) {
         const s = this.shots[i];
