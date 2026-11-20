@@ -50,7 +50,7 @@ function Preview({ p, className }: { p: Project; className: string }) {
 function Title({ children, className }: { children: React.ReactNode; className: string }) {
   return (
     <h3 className={cn('m-0', className)}>
-      <span className="bg-[linear-gradient(#F2B860,#F2B860)] bg-[length:0_2px] bg-[position:0_100%] bg-no-repeat pb-1 font-display font-semibold tracking-[-0.035em] transition-[background-size] duration-600 ease-out-expo group-hover/project:bg-[length:100%_2px]">
+      <span className="bg-[linear-gradient(var(--color-gold),var(--color-gold))] bg-[length:0_2px] bg-[position:0_100%] bg-no-repeat pb-1 font-display font-semibold tracking-[-0.035em] transition-[background-size] duration-600 ease-out-expo group-hover/project:bg-[length:100%_2px]">
         {children}
       </span>
     </h3>

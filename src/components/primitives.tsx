@@ -80,7 +80,7 @@ export function Caps({ items, className }: { items: string[]; className?: string
       {items.map((c) => (
         <li
           key={c}
-          className="flex items-start gap-2.5 text-[14.5px] leading-[1.45] text-zinc-200 before:mt-[7px] before:size-1.5 before:flex-none before:rounded-full before:bg-ember before:shadow-[0_0_10px_rgba(224,118,58,0.7)] before:content-['']"
+          className="flex items-start gap-2.5 text-[14.5px] leading-[1.45] text-zinc-200 before:mt-[7px] before:size-1.5 before:flex-none before:rounded-full before:bg-ember before:shadow-[0_0_10px_rgb(var(--ember-rgb)/0.7)] before:content-['']"
         >
           {c}
         </li>

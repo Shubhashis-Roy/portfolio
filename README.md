@@ -46,3 +46,13 @@ public/fonts/       self-hosted Inter, JetBrains Mono, Space Grotesk
 ## Deploy
 
 Push to GitHub and import the repo on Vercel. No extra configuration is needed.
+
+## Themes
+
+Two themes, switched from the toggle in the nav (choice is saved in `localStorage`):
+
+- **Normal** — black + gold (the original design)
+- **Dark** — deep indigo + violet glow
+
+Brand colours are CSS variables (`--ink-rgb`, `--panel-rgb`, `--gold-rgb`, `--gold-soft-rgb`, `--ember-rgb`) set in `src/app/globals.css` under `:root` and `[data-theme="dark"]`; Tailwind classes such as `text-gold` / `bg-ink` follow the active theme. The canvas maps its colours in `src/galaxy/palette.ts`. Use the `theme-dark:` variant for one-off dark-theme styles.
+

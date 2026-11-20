@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { profile } from '@/data/content';
+import { THEME_STORAGE_KEY } from '@/galaxy/palette';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -19,8 +20,14 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="normal" suppressHydrationWarning>
       <head>
+        {/* Apply the saved theme before first paint (no flash). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)});if(t==="dark"||t==="normal")document.documentElement.setAttribute("data-theme",t)}catch(e){}})()`,
+          }}
+        />
         <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossOrigin="" />
         <link rel="preload" href="/fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossOrigin="" />
       </head>

@@ -59,7 +59,7 @@ export default function CaseStudyModal({ open, onOpenChange, index, onNavigate }
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         {/* Header */}
-        <div className="relative border-b border-white/8 bg-[radial-gradient(700px_320px_at_85%_0%,rgba(224,118,58,0.18),rgba(224,118,58,0)_70%),radial-gradient(500px_260px_at_10%_100%,rgba(242,184,96,0.1),rgba(242,184,96,0)_70%)] px-16 pt-16 pb-12 max-md:px-6 max-md:pt-10 max-md:pb-8">
+        <div className="relative border-b border-white/8 bg-[radial-gradient(700px_320px_at_85%_0%,rgb(var(--ember-rgb)/0.18),rgb(var(--ember-rgb)/0)_70%),radial-gradient(500px_260px_at_10%_100%,rgb(var(--gold-rgb)/0.1),rgb(var(--gold-rgb)/0)_70%)] px-16 pt-16 pb-12 max-md:px-6 max-md:pt-10 max-md:pb-8">
           <div className="flex items-start justify-between gap-4">
             <div className="flex flex-wrap items-center gap-4">
               <Mono tone="gold">{p.num} — Case study</Mono>

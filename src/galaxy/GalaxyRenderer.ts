@@ -8,6 +8,7 @@
  */
 
 import { buildAstronautSprite } from './astronaut';
+import { currentTheme, paletteFor } from './palette';
 
 type Star = { x: number; y: number; z: number; r: number; c: string; tw: boolean; ph: number; sp: number };
 type Dust = { x: number; y: number; vx: number; vy: number; r: number; a: number; c: string };
@@ -40,6 +41,9 @@ export class GalaxyRenderer {
   private gLv = 8;
   private gDisk: DiskP[] | null = null;
   private gk: number[][] = [];
+  /** Maps a design colour to the active theme (identity for the normal theme). */
+  private c: (css: string) => string = (css) => css;
+  private themeObserver: MutationObserver | null = null;
   private astro: HTMLCanvasElement | null = null;
   private astroTint: HTMLCanvasElement | null = null;
 
@@ -55,6 +59,13 @@ export class GalaxyRenderer {
     window.addEventListener('pointermove', this.onMove, { passive: true });
     window.addEventListener('resize', this.onResize);
     window.addEventListener('scroll', this.onScroll, { passive: true });
+    // Follow the site theme (<html data-theme>)
+    this.c = paletteFor(currentTheme());
+    this.themeObserver = new MutationObserver(() => {
+      this.c = paletteFor(currentTheme());
+      if (!this.animating) requestAnimationFrame((t) => this.frame(t));
+    });
+    this.themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     this.resize();
     const loop = (now: number) => {
       if (this.dead) return;
@@ -70,6 +81,7 @@ export class GalaxyRenderer {
     window.removeEventListener('pointermove', this.onMove);
     window.removeEventListener('resize', this.onResize);
     window.removeEventListener('scroll', this.onScroll);
+    this.themeObserver?.disconnect();
   }
 
   /** Re-scan sections (call after layout changes). */
@@ -140,7 +152,7 @@ export class GalaxyRenderer {
     ctx.lineWidth = lw;
     ctx.lineCap = 'round';
     for (let ci = 0; ci < C; ci++) {
-      ctx.strokeStyle = 'rgb(' + this.gCols[ci] + ')';
+      ctx.strokeStyle = this.c('rgb(' + this.gCols[ci] + ')');
       for (let li = 0; li < L; li++) {
         const arr = this.gk[layer * C * L + ci * L + li];
         if (!arr.length) continue;
@@ -176,9 +188,9 @@ export class GalaxyRenderer {
       pt[1] = cy + (u * sr + v * cr) * rh;
     };
     const halo = ctx.createRadialGradient(cx, cy, rh, cx, cy, rh * 6);
-    halo.addColorStop(0, 'rgba(255,206,150,' + 0.18 * A + ')');
-    halo.addColorStop(0.35, 'rgba(214,112,60,' + 0.06 * A + ')');
-    halo.addColorStop(1, 'rgba(214,112,60,0)');
+    halo.addColorStop(0, this.c('rgba(255,206,150,') + 0.18 * A + ')');
+    halo.addColorStop(0.35, this.c('rgba(214,112,60,') + 0.06 * A + ')');
+    halo.addColorStop(1, this.c('rgba(214,112,60,0)'));
     ctx.fillStyle = halo;
     ctx.fillRect(cx - rh * 6, cy - rh * 6, rh * 12, rh * 12);
     const band = (half: number, k2: number) => {
@@ -186,10 +198,10 @@ export class GalaxyRenderer {
       ctx.beginPath(); ctx.rect(-rh * 7, half < 0 ? -rh * 7 : 0, rh * 14, rh * 7); ctx.clip();
       ctx.scale(1, tau * 1.7);
       const g = ctx.createRadialGradient(0, 0, rh * 1.3, 0, 0, rh * 6.2);
-      g.addColorStop(0, 'rgba(255,240,214,' + 0.6 * A * k2 + ')');
-      g.addColorStop(0.16, 'rgba(255,214,160,' + 0.38 * A * k2 + ')');
-      g.addColorStop(0.5, 'rgba(214,112,60,' + 0.14 * A * k2 + ')');
-      g.addColorStop(1, 'rgba(122,54,28,0)');
+      g.addColorStop(0, this.c('rgba(255,240,214,') + 0.6 * A * k2 + ')');
+      g.addColorStop(0.16, this.c('rgba(255,214,160,') + 0.38 * A * k2 + ')');
+      g.addColorStop(0.5, this.c('rgba(214,112,60,') + 0.14 * A * k2 + ')');
+      g.addColorStop(1, this.c('rgba(122,54,28,0)'));
       ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, rh * 6.2, 0, TAU); ctx.fill();
       ctx.restore();
     };
@@ -208,7 +220,7 @@ export class GalaxyRenderer {
     };
     // 1. Far side: disk glow + lensed arc over the top
     band(-1, 1);
-    arcs(false, [[1.2, 0.14, 0.5, '255,240,214'], [1.42, 0.3, 0.3, '255,214,160'], [1.78, 0.46, 0.13, '246,172,108'], [2.3, 0.6, 0.05, '214,112,60']]);
+    arcs(false, [[1.2, 0.14, 0.5, this.c('255,240,214')], [1.42, 0.3, 0.3, this.c('255,214,160')], [1.78, 0.46, 0.13, this.c('246,172,108')], [2.3, 0.6, 0.05, this.c('214,112,60')]]);
     for (const p of this.gDisk!) {
       const ph = p.a - p.w * t;
       const s = Math.sin(ph), c = Math.cos(ph);
@@ -238,18 +250,18 @@ export class GalaxyRenderer {
     // 2. Event horizon shadow
     ctx.globalCompositeOperation = 'source-over';
     const sh = ctx.createRadialGradient(cx, cy - rh * 0.2, 0, cx, cy, rh * 1.04);
-    sh.addColorStop(0, 'rgba(30,12,6,1)');
-    sh.addColorStop(0.85, 'rgba(6,3,2,1)');
-    sh.addColorStop(1, 'rgba(6,3,2,0)');
+    sh.addColorStop(0, this.c('rgba(30,12,6,1)'));
+    sh.addColorStop(0.85, this.c('rgba(6,3,2,1)'));
+    sh.addColorStop(1, this.c('rgba(6,3,2,0)'));
     ctx.fillStyle = sh; ctx.beginPath(); ctx.arc(cx, cy, rh * 1.04, 0, TAU); ctx.fill();
     ctx.globalCompositeOperation = 'lighter';
     // 3. Photon ring
-    ctx.lineWidth = Math.max(1, rh * 0.012); ctx.strokeStyle = 'rgba(255,246,232,' + 0.9 * A + ')';
+    ctx.lineWidth = Math.max(1, rh * 0.012); ctx.strokeStyle = this.c('rgba(255,246,232,') + 0.9 * A + ')';
     ctx.beginPath(); ctx.arc(cx, cy, rh * 1.015, 0, TAU); ctx.stroke();
-    ctx.lineWidth = rh * 0.05; ctx.strokeStyle = 'rgba(255,214,160,' + 0.14 * A + ')';
+    ctx.lineWidth = rh * 0.05; ctx.strokeStyle = this.c('rgba(255,214,160,') + 0.14 * A + ')';
     ctx.beginPath(); ctx.arc(cx, cy, rh * 1.03, 0, TAU); ctx.stroke();
     // 4. Secondary image under the shadow
-    arcs(true, [[1.1, 0.06, 0.28, '255,236,210'], [1.28, 0.16, 0.12, '246,172,108'], [1.55, 0.26, 0.04, '214,112,60']]);
+    arcs(true, [[1.1, 0.06, 0.28, this.c('255,236,210')], [1.28, 0.16, 0.12, this.c('246,172,108')], [1.55, 0.26, 0.04, this.c('214,112,60')]]);
     this.gStroke(ctx, 1, Math.max(0.8, rh / 95));
     // 5. Near side of the disk crosses in front
     band(1, 1.15);
@@ -281,18 +293,18 @@ export class GalaxyRenderer {
     g.globalCompositeOperation = 'source-atop';
     const la = ra - spin, lx = Math.cos(la) * 128, ly = Math.sin(la) * 128;
     const lg = g.createLinearGradient(128 - lx, 128 - ly, 128 + lx, 128 + ly);
-    lg.addColorStop(0, 'rgba(0,0,0,0.45)');
-    lg.addColorStop(0.55, 'rgba(0,0,0,0)');
-    lg.addColorStop(0.8, 'rgba(255,180,110,0.12)');
-    lg.addColorStop(1, 'rgba(255,170,90,' + (0.45 + 0.25 * q) + ')');
+    lg.addColorStop(0, this.c('rgba(0,0,0,0.45)'));
+    lg.addColorStop(0.55, this.c('rgba(0,0,0,0)'));
+    lg.addColorStop(0.8, this.c('rgba(255,180,110,0.12)'));
+    lg.addColorStop(1, this.c('rgba(255,170,90,') + (0.45 + 0.25 * q) + ')');
     g.fillStyle = lg; g.fillRect(0, 0, 256, 256);
-    if (q > 0.01) { g.fillStyle = 'rgba(225,110,50,' + q * 0.55 + ')'; g.fillRect(0, 0, 256, 256); }
+    if (q > 0.01) { g.fillStyle = this.c('rgba(225,110,50,') + q * 0.55 + ')'; g.fillRect(0, 0, 256, 256); }
 
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
     const gl = ctx.createRadialGradient(x, y, 0, x, y, s * 1.8);
-    gl.addColorStop(0, 'rgba(255,200,140,' + (0.04 + 0.1 * q) + ')');
-    gl.addColorStop(1, 'rgba(255,200,140,0)');
+    gl.addColorStop(0, this.c('rgba(255,200,140,') + (0.04 + 0.1 * q) + ')');
+    gl.addColorStop(1, this.c('rgba(255,200,140,0)'));
     ctx.fillStyle = gl; ctx.fillRect(x - s * 1.8, y - s * 1.8, s * 3.6, s * 3.6);
     ctx.globalCompositeOperation = 'source-over';
     ctx.globalAlpha = 1 - 0.45 * q;
@@ -310,7 +322,7 @@ export class GalaxyRenderer {
     const g = ctx.createRadialGradient(x - r * 0.45, y + r * 0.35, r * 0.1, x, y, r * 1.05);
     g.addColorStop(0, 'rgba(214,222,230,' + 0.85 * Math.min(1, k) + ')');
     g.addColorStop(0.55, 'rgba(110,122,134,' + 0.75 * Math.min(1, k) + ')');
-    g.addColorStop(1, 'rgba(14,16,18,0.9)');
+    g.addColorStop(1, 'rgba(14,16,18,' + 0.9 * Math.min(1, k) + ')');
     ctx.fillStyle = g;
     ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
     ctx.globalCompositeOperation = 'lighter';
@@ -340,9 +352,9 @@ export class GalaxyRenderer {
   private blob(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, col: string, a: number) {
     if (y + r < 0 || y - r > this.H || a <= 0.003) return;
     const gr = ctx.createRadialGradient(x, y, 0, x, y, r);
-    gr.addColorStop(0, 'rgba(' + col + ',' + a + ')');
-    gr.addColorStop(0.5, 'rgba(' + col + ',' + a * 0.35 + ')');
-    gr.addColorStop(1, 'rgba(' + col + ',0)');
+    gr.addColorStop(0, 'rgba(' + this.c(col) + ',' + a + ')');
+    gr.addColorStop(0.5, 'rgba(' + this.c(col) + ',' + a * 0.35 + ')');
+    gr.addColorStop(1, 'rgba(' + this.c(col) + ',0)');
     ctx.fillStyle = gr;
     ctx.fillRect(x - r, y - r, r * 2, r * 2);
   }
@@ -375,18 +387,18 @@ export class GalaxyRenderer {
 
     ctx.globalCompositeOperation = 'source-over';
     ctx.globalAlpha = 1;
-    ctx.fillStyle = '#050505';
+    ctx.fillStyle = this.c('#050505');
     ctx.fillRect(0, 0, W, H);
     ctx.globalCompositeOperation = 'lighter';
 
     // Nebula clouds anchored to sections (drift slower than content = depth)
     const neb: [string, number, number, number, string, number][] = [
-      ['hero', 0.7, 0.46, 0.5, '224,118,58', 0.09], ['hero', 0.55, 0.2, 0.32, '242,184,96', 0.04], ['hero', 0.95, 0.85, 0.4, '140,66,34', 0.09], ['hero', 0.98, 0.1, 0.42, '110,135,160', 0.05], ['hero', 0.15, 0.95, 0.35, '110,135,160', 0.03],
-      ['about', 0.88, 0.35, 0.32, '232,150,90', 0.035],
-      ['experience', 0.05, 0.5, 0.3, '224,118,58', 0.025],
-      ['projects', 0.1, 0.12, 0.4, '224,118,58', 0.07], ['projects', 0.92, 0.45, 0.45, '242,184,96', 0.045], ['projects', 0.2, 0.8, 0.42, '200,90,0', 0.06],
-      ['skills', 0.85, 0.5, 0.3, '232,150,90', 0.03],
-      ['contact', 0.5, 0.48, 0.6, '224,118,58', 0.13], ['contact', 0.3, 0.3, 0.3, '242,184,96', 0.05],
+      ['hero', 0.7, 0.46, 0.5, this.c('224,118,58'), 0.09], ['hero', 0.55, 0.2, 0.32, this.c('242,184,96'), 0.04], ['hero', 0.95, 0.85, 0.4, this.c('140,66,34'), 0.09], ['hero', 0.98, 0.1, 0.42, this.c('110,135,160'), 0.05], ['hero', 0.15, 0.95, 0.35, this.c('110,135,160'), 0.03],
+      ['about', 0.88, 0.35, 0.32, this.c('232,150,90'), 0.035],
+      ['experience', 0.05, 0.5, 0.3, this.c('224,118,58'), 0.025],
+      ['projects', 0.1, 0.12, 0.4, this.c('224,118,58'), 0.07], ['projects', 0.92, 0.45, 0.45, this.c('242,184,96'), 0.045], ['projects', 0.2, 0.8, 0.42, this.c('200,90,0'), 0.06],
+      ['skills', 0.85, 0.5, 0.3, this.c('232,150,90'), 0.03],
+      ['contact', 0.5, 0.48, 0.6, this.c('224,118,58'), 0.13], ['contact', 0.3, 0.3, 0.3, this.c('242,184,96'), 0.05],
     ];
     for (let i = 0; i < neb.length; i++) {
       const n = neb[i], rc = byKind[n[0]];
@@ -407,7 +419,7 @@ export class GalaxyRenderer {
       let a = (0.22 + 0.78 * s.z) * (0.32 + 0.68 * I);
       if (s.tw) a *= 0.45 + 0.55 * Math.abs(Math.sin(t * s.sp + s.ph));
       ctx.globalAlpha = Math.min(1, a * Math.min(1.3, 0.6 + 0.4 * k));
-      ctx.fillStyle = 'rgb(' + s.c + ')';
+      ctx.fillStyle = this.c('rgb(' + s.c + ')');
       const sz = s.r * (0.6 + s.z * 1.1);
       ctx.fillRect(x, y, sz, sz);
     }
@@ -448,8 +460,18 @@ export class GalaxyRenderer {
       }
     }
     const bhA = k * (narrow ? 0.6 : 1) * (0.42 + 0.58 * this.intensityAt(by, secs));
+    // Moon: starts low and to the right of the black hole, then (with scroll) rises, swings in behind it,
+    // shrinks and fades out. Drawn before the black hole so the shadow and disk pass in front of it.
+    if (!narrow) {
+      const m = sm(p, 0, 0.32);
+      const u = 1 - m;
+      // quadratic curve in black-hole radii: start (2.4, 1.95) → control (2.7, -0.5) → end (0.1, -0.15)
+      const ox = u * u * 2.4 + 2 * u * m * 2.7 + m * m * 0.1;
+      const oy = u * u * 1.95 + 2 * u * m * -0.5 + m * m * -0.15;
+      const fade = 1 - sm(m, 0.6, 1);
+      if (fade > 0.01) this.drawMoon(ctx, bx + ox * brh - mx * 24, by + oy * brh - my * 18, 20 * (1 - 0.55 * m), k * fade);
+    }
     this.drawGargantua(ctx, bx, by, brh, -0.05 + mx * 0.03, 0.075 + my * 0.015, bhA, t);
-    if (h && !narrow) this.drawMoon(ctx, h.left + h.width * 0.93 - mx * 50, h.top * 0.5 + h.height * 0.15 - my * 36, 20, k);
     this.drawAstronaut(ctx, bx, by, brh, p, t, narrow);
 
     // Cosmic dust
@@ -462,7 +484,7 @@ export class GalaxyRenderer {
       }
       const I = this.intensityAt(d.y, secs);
       ctx.globalAlpha = d.a * (0.4 + 0.6 * I) * k;
-      ctx.fillStyle = 'rgb(' + d.c + ')';
+      ctx.fillStyle = this.c('rgb(' + d.c + ')');
       ctx.beginPath(); ctx.arc(d.x + mx * 50, d.y + my * 40, d.r, 0, TAU); ctx.fill();
     }
     ctx.globalAlpha = 1;
@@ -484,9 +506,9 @@ export class GalaxyRenderer {
         const fade = Math.sin((s.life / s.max) * Math.PI);
         const tx = s.x - s.vx * 0.16, ty = s.y - s.vy * 0.16;
         const lg = ctx.createLinearGradient(s.x, s.y, tx, ty);
-        lg.addColorStop(0, 'rgba(255,246,222,' + 0.9 * fade + ')');
-        lg.addColorStop(0.3, 'rgba(242,184,96,' + 0.4 * fade + ')');
-        lg.addColorStop(1, 'rgba(224,118,58,0)');
+        lg.addColorStop(0, this.c('rgba(255,246,222,') + 0.9 * fade + ')');
+        lg.addColorStop(0.3, this.c('rgba(242,184,96,') + 0.4 * fade + ')');
+        lg.addColorStop(1, this.c('rgba(224,118,58,0)'));
         ctx.strokeStyle = lg; ctx.lineWidth = 1.4; ctx.lineCap = 'round';
         ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(tx, ty); ctx.stroke();
       }
@@ -496,9 +518,9 @@ export class GalaxyRenderer {
     // Readability veil: darkening under the left text column in the hero
     if (h && !narrow) {
       const vg = ctx.createLinearGradient(h.left, 0, h.left + h.width * 0.62, 0);
-      vg.addColorStop(0, 'rgba(5,5,5,0.6)');
-      vg.addColorStop(0.55, 'rgba(5,5,5,0.32)');
-      vg.addColorStop(1, 'rgba(5,5,5,0)');
+      vg.addColorStop(0, this.c('rgba(5,5,5,0.6)'));
+      vg.addColorStop(0.55, this.c('rgba(5,5,5,0.32)'));
+      vg.addColorStop(1, this.c('rgba(5,5,5,0)'));
       ctx.fillStyle = vg;
       ctx.fillRect(h.left, Math.max(0, h.top), h.width * 0.6, Math.min(H, h.height));
     }

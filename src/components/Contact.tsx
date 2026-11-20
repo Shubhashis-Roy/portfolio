@@ -33,7 +33,7 @@ export default function Contact() {
         <Eyebrow center className="reveal">05 — Contact</Eyebrow>
         <h2 className="reveal-text mx-auto my-0 max-w-[1000px] font-display text-[clamp(48px,7vw,108px)] leading-[0.98] font-semibold tracking-[-0.035em]">
           Let’s build something{' '}
-          <span className="text-gold [text-shadow:0_0_60px_rgba(242,184,96,0.4)]">intelligent.</span>
+          <span className="text-gold [text-shadow:0_0_60px_rgb(var(--gold-rgb)/0.4)]">intelligent.</span>
         </h2>
         <Lead className="reveal mx-auto mt-7 max-w-[560px]">
           Open to conversations about AI products, full-stack engineering and real-time systems.

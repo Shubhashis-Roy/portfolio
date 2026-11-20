@@ -1,6 +1,7 @@
 import { profile } from '@/data/content';
 import { Button } from '@/components/ui/button';
 import { Container } from './primitives';
+import ThemeToggle from './ThemeToggle';
 
 const links = [
   ['#about', 'About'],
@@ -15,7 +16,7 @@ export default function Nav() {
     <header className="sticky top-0 z-5 border-b border-white/6 bg-ink/62 backdrop-blur-[14px]">
       <Container className="flex h-[76px] items-center justify-between gap-6">
         <a className="flex items-center gap-3 text-white no-underline" href="#top" aria-label={`${profile.name} — home`}>
-          <span className="flex size-9 items-center justify-center rounded-full border border-gold/50 font-display text-sm font-semibold text-gold shadow-[0_0_24px_rgba(242,184,96,0.18)]">
+          <span className="flex size-9 items-center justify-center rounded-full border border-gold/50 font-display text-sm font-semibold text-gold shadow-[0_0_24px_rgb(var(--gold-rgb)/0.18)]">
             {profile.initials}
           </span>
           <span className="text-[15px] font-semibold">{profile.name}</span>
@@ -31,9 +32,12 @@ export default function Nav() {
             </a>
           ))}
         </nav>
-        <Button asChild variant="outline" size="sm">
-          <a href="#contact">Let’s talk</a>
-        </Button>
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <Button asChild variant="outline" size="sm" className="max-md:hidden">
+            <a href="#contact">Let’s talk</a>
+          </Button>
+        </div>
       </Container>
     </header>
   );

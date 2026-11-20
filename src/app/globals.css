@@ -15,13 +15,20 @@
 /* ------------------------------------------------------------------ */
 /* Design tokens                                                       */
 /* ------------------------------------------------------------------ */
+/* Lets utilities target the dark theme, e.g. `theme-dark:bg-white/10`. */
+@custom-variant theme-dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Brand palette — resolves to the active theme (see :root / [data-theme="dark"] below).
+   Names are historical: in the dark theme "gold" is the violet accent and "ember" the deep indigo-violet. */
+@theme inline {
+  --color-ink: rgb(var(--ink-rgb));
+  --color-panel: rgb(var(--panel-rgb));
+  --color-gold: rgb(var(--gold-rgb));
+  --color-gold-soft: rgb(var(--gold-soft-rgb));
+  --color-ember: rgb(var(--ember-rgb));
+}
+
 @theme {
-  /* Brand palette */
-  --color-ink: #050505;
-  --color-panel: #0a0a0a;
-  --color-gold: #f2b860;
-  --color-gold-soft: #f7cd8c;
-  --color-ember: #e0763a;
 
   /* Typography */
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
@@ -83,25 +90,44 @@
 
 :root {
   color-scheme: dark;
+  /* Normal theme: black + gold */
+  --ink-rgb: 5 5 5;
+  --panel-rgb: 10 10 10;
+  --gold-rgb: 242 184 96;
+  --gold-soft-rgb: 247 205 140;
+  --ember-rgb: 224 118 58;
+  --muted-fg: #a1a1aa;
+
   --radius: 0.625rem;
-  --background: #050505;
+  --background: rgb(var(--ink-rgb));
   --foreground: #ffffff;
-  --card: rgba(10, 10, 10, 0.72);
+  --card: rgb(var(--panel-rgb) / 0.72);
   --card-foreground: #ffffff;
-  --popover: #0a0a0a;
+  --popover: rgb(var(--panel-rgb));
   --popover-foreground: #ffffff;
-  --primary: #f2b860;
-  --primary-foreground: #050505;
+  --primary: rgb(var(--gold-rgb));
+  --primary-foreground: rgb(var(--ink-rgb));
   --secondary: rgba(255, 255, 255, 0.05);
   --secondary-foreground: #ffffff;
   --muted: rgba(255, 255, 255, 0.05);
-  --muted-foreground: #a1a1aa;
-  --accent: rgba(242, 184, 96, 0.06);
-  --accent-foreground: #f2b860;
+  --muted-foreground: var(--muted-fg);
+  --accent: rgb(var(--gold-rgb) / 0.06);
+  --accent-foreground: rgb(var(--gold-rgb));
   --destructive: #e5484d;
   --border: rgba(255, 255, 255, 0.1);
   --input: rgba(255, 255, 255, 0.15);
-  --ring: #f2b860;
+  --ring: rgb(var(--gold-rgb));
+}
+
+/* Dark theme: deep indigo night + violet glow */
+[data-theme="dark"] {
+  --ink-rgb: 9 7 26;
+  --panel-rgb: 17 14 40;
+  --gold-rgb: 167 139 250;
+  --gold-soft-rgb: 196 181 253;
+  --ember-rgb: 124 92 255;
+  --muted-fg: #a6a3c4;
+  --border: rgba(196, 181, 253, 0.12);
 }
 
 @layer base {
@@ -115,6 +141,7 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
+    transition: background-color 0.4s ease;
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {

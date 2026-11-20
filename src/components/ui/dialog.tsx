@@ -37,7 +37,7 @@ function DialogOverlay({
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
       className={cn(
-        "fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[rgba(3,3,3,0.78)] px-6 py-8 backdrop-blur-[10px] data-open:animate-mfade data-closed:animate-out data-closed:fade-out-0",
+        "fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[rgb(var(--ink-rgb)/0.78)] px-6 py-8 backdrop-blur-[10px] data-open:animate-mfade data-closed:animate-out data-closed:fade-out-0",
         className
       )}
       {...props}
@@ -60,7 +60,7 @@ function DialogContent({
         <DialogPrimitive.Content
           data-slot="dialog-content"
           className={cn(
-            "relative w-full max-w-[1120px] overflow-hidden rounded-[32px] border border-white/10 bg-popover text-popover-foreground shadow-[0_60px_160px_rgba(0,0,0,0.8),0_0_80px_rgba(224,118,58,0.08)] outline-none data-open:animate-mrise data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 motion-reduce:animate-none!",
+            "relative w-full max-w-[1120px] overflow-hidden rounded-[32px] border border-white/10 bg-popover text-popover-foreground shadow-[0_60px_160px_rgba(0,0,0,0.8),0_0_80px_rgb(var(--ember-rgb)/0.08)] outline-none data-open:animate-mrise data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 motion-reduce:animate-none!",
             className
           )}
           {...props}

@@ -10,10 +10,10 @@ export const phones =
 
 /** Phone hardware frame. Every second phone in a row sits lower. */
 export const phone =
-  'h-[430px] w-[208px] flex-none rounded-[36px] border border-white/14 bg-[linear-gradient(160deg,#222,#0b0b0b_60%)] p-2 shadow-[0_40px_90px_rgba(0,0,0,0.7),0_0_60px_rgba(224,118,58,0.08)] even:mt-14 max-md:even:mt-7';
+  'h-[430px] w-[208px] flex-none rounded-[36px] border border-white/14 bg-[linear-gradient(160deg,#222,var(--color-panel)_60%)] p-2 shadow-[0_40px_90px_rgba(0,0,0,0.7),0_0_60px_rgb(var(--ember-rgb)/0.08)] even:mt-14 max-md:even:mt-7';
 
 /** Phone screen. */
-export const screen = 'relative flex h-full w-full flex-col overflow-hidden rounded-[29px] bg-[#0B0B0B] text-[11px]';
+export const screen = 'relative flex h-full w-full flex-col overflow-hidden rounded-[29px] bg-[var(--color-panel)] text-[11px]';
 
 /** Dynamic-island notch. */
 export const island = 'mx-auto mt-2 mb-1.5 h-[18px] w-16 flex-none rounded-xl bg-black';

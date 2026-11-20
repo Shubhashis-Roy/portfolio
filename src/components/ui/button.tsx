@@ -10,10 +10,10 @@ const buttonVariants = cva(
       variant: {
         /** Solid gold call to action */
         default:
-          "bg-primary text-primary-foreground hover:bg-gold-soft hover:text-primary-foreground enabled:hover:-translate-y-0.5 hover:shadow-[0_0_48px_rgba(242,184,96,0.35)] hover:[&_svg]:translate-x-[3px] [a]:hover:-translate-y-0.5",
+          "bg-primary text-primary-foreground hover:bg-gold-soft hover:text-primary-foreground enabled:hover:-translate-y-0.5 hover:shadow-[0_0_48px_rgb(var(--gold-rgb)/0.35)] hover:[&_svg]:translate-x-[3px] [a]:hover:-translate-y-0.5",
         /** Dark glass button with a light border */
         outline:
-          "border-white/18 bg-[rgba(10,10,10,0.55)] text-white hover:text-white enabled:hover:-translate-y-0.5 enabled:hover:border-gold/60 [a]:hover:-translate-y-0.5 [a]:hover:border-gold/60 hover:[&_svg]:translate-x-[3px]",
+          "border-white/18 bg-[rgb(var(--panel-rgb)/0.55)] text-white hover:text-white enabled:hover:-translate-y-0.5 enabled:hover:border-gold/60 [a]:hover:-translate-y-0.5 [a]:hover:border-gold/60 hover:[&_svg]:translate-x-[3px]",
         /** Round icon button (e.g. close) */
         icon: "border-white/18 bg-ink/60 text-white hover:border-gold hover:text-gold",
       },

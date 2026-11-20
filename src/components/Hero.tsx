@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Container, Dot, Mono } from './primitives';
 import ResumeButton from './ResumeButton';
 
-const shadow = '[text-shadow:0_2px_24px_rgba(5,5,5,0.95),0_0_2px_rgba(5,5,5,0.8)]';
+const shadow = '[text-shadow:0_2px_24px_rgb(var(--ink-rgb)/0.95),0_0_2px_rgb(var(--ink-rgb)/0.8)]';
 
 export default function Hero() {
   const facts = [
@@ -27,7 +27,7 @@ export default function Hero() {
           </div>
           <h1 className={`reveal-text m-0 font-display text-[clamp(52px,7.4vw,112px)] leading-[0.96] font-semibold tracking-[-0.035em] ${shadow}`}>
             Engineering{' '}
-            <em className="text-gold not-italic [text-shadow:0_2px_30px_rgba(5,5,5,0.85),0_0_60px_rgba(242,184,96,0.3)]">Intelligent</em>{' '}
+            <em className="text-gold not-italic [text-shadow:0_2px_30px_rgb(var(--ink-rgb)/0.85),0_0_60px_rgb(var(--gold-rgb)/0.3)]">Intelligent</em>{' '}
             Digital Experiences.
           </h1>
           <p className={`reveal mt-8 mb-0 max-w-[620px] text-xl leading-[1.65] text-[#C4C4CC] ${shadow}`}>
