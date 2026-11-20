@@ -7,6 +7,7 @@ import Projects from '@/components/Projects';
 import Skills from '@/components/Skills';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
+import BackToTop from '@/components/BackToTop';
 
 export default function Home() {
   return (
@@ -23,6 +24,7 @@ export default function Home() {
           <Contact />
         </main>
         <Footer />
+        <BackToTop />
       </div>
     </div>
   );
