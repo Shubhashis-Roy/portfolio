@@ -1,17 +1,20 @@
+import { ArrowDownToLine } from 'lucide-react';
 import { profile } from '@/data/content';
-import { DownloadIcon } from './Icons';
+import { Button } from '@/components/ui/button';
 
 export default function ResumeButton({ icon = true }: { icon?: boolean }) {
-  if (profile.resumeUrl) {
-    return (
-      <a className="btn btn-ghost" href={profile.resumeUrl} download>
-        Download Resume {icon && <DownloadIcon />}
-      </a>
-    );
-  }
+  const content = (
+    <>
+      Download Resume {icon && <ArrowDownToLine size={18} aria-hidden />}
+    </>
+  );
   return (
-    <a className="btn btn-ghost" href="#contact" title="Connect to your resume PDF">
-      Download Resume {icon && <DownloadIcon />}
-    </a>
+    <Button asChild variant="outline">
+      {profile.resumeUrl ? (
+        <a href={profile.resumeUrl} download>{content}</a>
+      ) : (
+        <a href="#contact" title="Connect to your resume PDF">{content}</a>
+      )}
+    </Button>
   );
 }

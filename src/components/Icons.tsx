@@ -1,27 +1,6 @@
-type P = { size?: number; style?: React.CSSProperties };
-
-const base = { fill: 'none', stroke: 'currentColor', strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true } as const;
-
-export const ArrowRight = ({ size = 18, style }: P) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" strokeWidth="2" style={style} {...base}>
-    <path d="M5 12h14M13 6l6 6-6 6" />
-  </svg>
-);
-
-export const DownloadIcon = ({ size = 18 }: P) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" strokeWidth="2" {...base}>
-    <path d="M12 4v12M6 11l6 6 6-6M5 20h14" />
-  </svg>
-);
-
-export const CloseIcon = ({ size = 18 }: P) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" strokeWidth="2" {...base}>
-    <path d="M6 6l12 12M18 6 6 18" />
-  </svg>
-);
-
+/** Custom line icons for the About focus cards (other icons come from lucide-react). */
 export const FocusIcon = ({ kind }: { kind: 'ai' | 'realtime' | 'platform' }) => (
-  <svg width="22" height="22" viewBox="0 0 24 24" strokeWidth="1.6" {...base}>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     {kind === 'ai' && (
       <>
         <circle cx="12" cy="12" r="3" />

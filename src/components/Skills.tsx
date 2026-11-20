@@ -1,28 +1,29 @@
 import { skills } from '@/data/content';
-import Tags from './Tags';
+import { Card } from '@/components/ui/card';
+import { Container, Eyebrow, Heading2, Lead, Mono, Section, Tags } from './primitives';
 
 export default function Skills() {
   return (
-    <section id="skills" className="sec" data-galaxy="0.35" data-gx="skills">
-      <div className="wrap">
-        <div className="g2" style={{ alignItems: 'end' }}>
-          <div style={{ gridColumn: 'span 7' }}>
-            <div className="sec-label rv"><i /><span className="mono gold">04 — Skills</span></div>
-            <h2 className="h2 disp rvt">The stack behind the work.</h2>
+    <Section id="skills" galaxy={0.35} gx="skills">
+      <Container>
+        <div className="grid grid-cols-1 items-end gap-7 md:grid-cols-12 md:gap-12">
+          <div className="md:col-span-7">
+            <Eyebrow className="reveal">04 — Skills</Eyebrow>
+            <Heading2>The stack behind the work.</Heading2>
           </div>
-          <p className="lead rv" style={{ gridColumn: 'span 5' }}>
+          <Lead className="reveal md:col-span-5">
             Technologies used across the projects above — grouped by where they sit in the product.
-          </p>
+          </Lead>
         </div>
-        <div className="skills">
+        <div className="mt-16 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
           {skills.map((s) => (
-            <div className="card rv" key={s.group}>
-              <span className="mono gold">{s.group}</span>
-              <Tags items={s.items} style={{ marginTop: '20px' }} />
-            </div>
+            <Card key={s.group} className="reveal">
+              <Mono tone="gold">{s.group}</Mono>
+              <Tags items={s.items} className="mt-5" />
+            </Card>
           ))}
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }

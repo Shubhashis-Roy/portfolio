@@ -5,14 +5,14 @@ import { GalaxyRenderer } from '@/galaxy/GalaxyRenderer';
 
 type Props = { intensity?: number; animate?: boolean };
 
-/** Fixed full-screen canvas. Reads `[data-galaxy]` sections inside the nearest `.pf` container. */
+/** Fixed full-screen canvas. Reads `[data-galaxy]` sections inside the nearest `[data-galaxy-root]`. */
 export default function Galaxy({ intensity = 1, animate = true }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<GalaxyRenderer | null>(null);
 
   useEffect(() => {
     const cv = canvasRef.current;
-    const root = cv?.closest<HTMLElement>('.pf');
+    const root = cv?.closest<HTMLElement>('[data-galaxy-root]');
     if (!cv || !root) return;
     const r = new GalaxyRenderer(cv, root, { intensity, animate });
     rendererRef.current = r;
@@ -25,8 +25,8 @@ export default function Galaxy({ intensity = 1, animate = true }: Props) {
   }, [intensity, animate]);
 
   return (
-    <div className="gx" aria-hidden="true">
-      <canvas ref={canvasRef} />
+    <div className="pointer-events-none fixed inset-0 z-0" aria-hidden="true">
+      <canvas ref={canvasRef} className="block size-full" />
     </div>
   );
 }

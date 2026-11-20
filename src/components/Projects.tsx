@@ -1,10 +1,13 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
+import { ArrowRight } from 'lucide-react';
 import { projects, type Project } from '@/data/content';
-import { ArrowRight } from './Icons';
-import Tags from './Tags';
+import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import CaseStudyModal from './CaseStudyModal';
+import { Caps, Container, Dot, Eyebrow, Lead, Mono, Note, Section, Tags } from './primitives';
 import CrushesMockup from './mockups/CrushesMockup';
 import PlayerIntelMockup from './mockups/PlayerIntelMockup';
 import WellnessMockup from './mockups/WellnessMockup';
@@ -26,172 +29,193 @@ const byId = (id: Project['id']) => {
 
 type OpenFn = (index: number) => void;
 
-function Preview({ p, height, tall }: { p: Project; height: number; tall?: boolean }) {
+/** Project card wrapper; `group/project` drives the hover zoom and title underline. */
+function Article({ className, ...props }: React.ComponentProps<'article'>) {
+  return <article className={cn('group/project reveal relative', className)} {...props} />;
+}
+
+function Preview({ p, className }: { p: Project; className: string }) {
   const Mockup = MOCKUPS[p.id];
   return (
-    <div className={tall ? 'pv rvi tall' : 'pv rvi'} style={{ height: `${height}px` }}>
-      <span className="pv-lbl">{p.previewLabel}</span>
+    <div className={cn('reveal-media relative isolate overflow-hidden rounded-[28px] border border-white/9 bg-panel', className)}>
+      <span className="absolute top-[18px] left-5 z-3 rounded-full border border-white/10 bg-ink/70 px-2.5 py-[7px] font-mono text-[10.5px] tracking-[.14em] text-zinc-400 uppercase">
+        {p.previewLabel}
+      </span>
       <Mockup />
     </div>
   );
 }
 
-function Actions({ p, onOpen }: { p: Project; onOpen: () => void }) {
-  const details = (
-    <button className="btn btn-gold sm" type="button" onClick={onOpen}>
-      View Details <ArrowRight size={16} />
-    </button>
-  );
-  if (p.privateProduct) {
-    return (
-      <div className="acts">
-        {details}
-        <span className="note">Company product · no public link</span>
-      </div>
-    );
-  }
+/** Project title with a gold underline that draws in on hover. */
+function Title({ children, className }: { children: React.ReactNode; className: string }) {
   return (
-    <>
-      <div className="acts">
-        {details}
-        {p.liveUrl ? (
-          <a className="btn btn-ghost sm" href={p.liveUrl} target="_blank" rel="noreferrer">View Project ↗</a>
-        ) : (
-          <button className="btn btn-ghost sm" type="button" disabled title="Add the live URL">View Project ↗</button>
-        )}
-      </div>
-      {!p.liveUrl && <p className="note" style={{ marginTop: '12px' }}>Live link: [add URL]</p>}
-    </>
+    <h3 className={cn('m-0', className)}>
+      <span className="bg-[linear-gradient(#F2B860,#F2B860)] bg-[length:0_2px] bg-[position:0_100%] bg-no-repeat pb-1 font-display font-semibold tracking-[-0.035em] transition-[background-size] duration-600 ease-out-expo group-hover/project:bg-[length:100%_2px]">
+        {children}
+      </span>
+    </h3>
+  );
+}
+
+function Meta({ p, label }: { p: Project; label?: string }) {
+  return (
+    <div className="mb-[18px] flex flex-wrap items-center gap-4">
+      <Mono tone="gold">{label ?? p.num}</Mono>
+      <Mono>{p.category}</Mono>
+    </div>
   );
 }
 
 function Org({ p, dot }: { p: Project; dot?: boolean }) {
   if (!p.org) return null;
   return (
-    <p style={{ margin: '16px 0 0' }}>
-      <span className="org">
-        {dot && <span className="dot" style={{ margin: 0, width: '6px', height: '6px' }} />}
+    <p className="mt-4 mb-0">
+      <Badge variant="org">
+        {dot && <Dot className="m-0 size-1.5" />}
         {p.org}
-      </span>
+      </Badge>
     </p>
   );
 }
 
-const Caps = ({ items }: { items: string[] }) => (
-  <ul className="caps">{items.map((c) => <li key={c}>{c}</li>)}</ul>
-);
+function Description({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <p className={cn('mt-[18px] mb-0 text-[17px] leading-[1.65] text-zinc-400', className)}>{children}</p>;
+}
+
+function Actions({ p, onOpen }: { p: Project; onOpen: () => void }) {
+  const details = (
+    <Button size="sm" onClick={onOpen}>
+      View Details <ArrowRight size={16} aria-hidden />
+    </Button>
+  );
+  if (p.privateProduct) {
+    return (
+      <div className="mt-7 flex flex-wrap items-center gap-3">
+        {details}
+        <Note>Company product · no public link</Note>
+      </div>
+    );
+  }
+  return (
+    <>
+      <div className="mt-7 flex flex-wrap items-center gap-3">
+        {details}
+        {p.liveUrl ? (
+          <Button asChild variant="outline" size="sm">
+            <a href={p.liveUrl} target="_blank" rel="noreferrer">View Project ↗</a>
+          </Button>
+        ) : (
+          <Button variant="outline" size="sm" disabled title="Add the live URL">View Project ↗</Button>
+        )}
+      </div>
+      {!p.liveUrl && <Note className="mt-3">Live link: [add URL]</Note>}
+    </>
+  );
+}
 
 function Featured({ onOpen }: { onOpen: OpenFn }) {
   const { p, index } = byId('crushes');
   return (
-    <article className="pj rv" style={{ marginBottom: '140px' }}>
-      <Preview p={p} height={640} tall />
-      <div className="feat-meta" style={{ display: 'grid', gridTemplateColumns: 'repeat(12,minmax(0,1fr))', gap: '48px', marginTop: '48px' }}>
-        <div style={{ gridColumn: 'span 5' }}>
-          <div className="meta-top">
-            <span className="mono gold">{p.num} — Featured</span>
-            <span className="mono dim">{p.category}</span>
-          </div>
-          <h3 style={{ margin: 0, fontSize: 'clamp(40px,4.6vw,64px)', lineHeight: 1 }}><span className="pt">{p.name}</span></h3>
-          {p.subtitle && (
-            <p className="disp" style={{ fontSize: '22px', color: '#D4D4D8', margin: '12px 0 0', letterSpacing: '-0.02em' }}>{p.subtitle}</p>
-          )}
+    <Article className="mb-[140px]">
+      <Preview p={p} className="h-[640px] max-md:h-[520px]" />
+      <div className="mt-12 grid grid-cols-1 gap-12 md:grid-cols-12">
+        <div className="md:col-span-5">
+          <Meta p={p} label={`${p.num} — Featured`} />
+          <Title className="text-[clamp(40px,4.6vw,64px)] leading-none">{p.name}</Title>
+          {p.subtitle && <p className="mt-3 mb-0 font-display text-[22px] tracking-[-0.02em] text-zinc-300">{p.subtitle}</p>}
           <Actions p={p} onOpen={() => onOpen(index)} />
         </div>
-        <div style={{ gridColumn: 'span 7' }}>
-          <p className="pd" style={{ marginTop: 0 }}>{p.desc}</p>
+        <div className="md:col-span-7">
+          <Description className="mt-0">{p.desc}</Description>
           <Caps items={p.caps} />
-          <Tags items={p.tags} style={{ marginTop: '28px' }} />
+          <Tags items={p.tags} className="mt-7" />
         </div>
       </div>
-    </article>
+    </Article>
   );
 }
 
 function Column({ id, onOpen }: { id: Project['id']; onOpen: OpenFn }) {
   const { p, index } = byId(id);
   return (
-    <article className="pj rv">
-      <Preview p={p} height={460} />
-      <div style={{ padding: '36px 4px 0' }}>
-        <div className="meta-top">
-          <span className="mono gold">{p.num}</span>
-          <span className="mono dim">{p.category}</span>
-        </div>
-        <h3 style={{ margin: 0, fontSize: '34px', lineHeight: 1.1 }}><span className="pt">{p.name}</span></h3>
+    <Article>
+      <Preview p={p} className="h-[460px]" />
+      <div className="px-1 pt-9">
+        <Meta p={p} />
+        <Title className="text-[34px] leading-[1.1]">{p.name}</Title>
         <Org p={p} />
-        <p className="pd">{p.desc}</p>
+        <Description>{p.desc}</Description>
         <Caps items={p.caps} />
-        <Tags items={p.tags} style={{ marginTop: '24px' }} />
+        <Tags items={p.tags} className="mt-6" />
         <Actions p={p} onOpen={() => onOpen(index)} />
       </div>
-    </article>
+    </Article>
   );
 }
 
-function Alternating({ id, onOpen, flip, last, height }: { id: Project['id']; onOpen: OpenFn; flip?: boolean; last?: boolean; height: number }) {
+function Alternating({ id, onOpen, flip, className, previewClass }: { id: Project['id']; onOpen: OpenFn; flip?: boolean; className?: string; previewClass: string }) {
   const { p, index } = byId(id);
-  const text = (
-    <div style={{ gridColumn: 'span 5', ...(flip ? { order: 1 } : {}) }}>
-      <div className="meta-top">
-        <span className="mono gold">{p.num}</span>
-        <span className="mono dim">{p.category}</span>
-      </div>
-      <h3 style={{ margin: 0, fontSize: '38px', lineHeight: 1.08 }}><span className="pt">{p.name}</span></h3>
-      <Org p={p} dot={p.id === 'healthcare'} />
-      <p className="pd">{p.desc}</p>
-      <Caps items={p.caps} />
-      <Tags items={p.tags} style={{ marginTop: '24px' }} />
-      <Actions p={p} onOpen={() => onOpen(index)} />
-    </div>
-  );
-  const preview = (
-    <div style={{ gridColumn: 'span 7', ...(flip ? { order: 2 } : {}) }}>
-      <Preview p={p} height={height} />
-    </div>
-  );
   return (
-    <article className="pj alt rv" style={last ? undefined : { marginBottom: '150px' }}>
-      {flip ? <>{text}{preview}</> : <>{preview}{text}</>}
-    </article>
+    <Article className={cn('grid grid-cols-1 items-center gap-7 md:grid-cols-12 md:gap-14', className)}>
+      <div className={cn('md:col-span-7', flip && 'md:order-2')}>
+        <Preview p={p} className={previewClass} />
+      </div>
+      <div className={cn('md:col-span-5', flip && 'md:order-1')}>
+        <Meta p={p} />
+        <Title className="text-[38px] leading-[1.08]">{p.name}</Title>
+        <Org p={p} dot={p.id === 'healthcare'} />
+        <Description>{p.desc}</Description>
+        <Caps items={p.caps} />
+        <Tags items={p.tags} className="mt-6" />
+        <Actions p={p} onOpen={() => onOpen(index)} />
+      </div>
+    </Article>
   );
 }
 
 export default function Projects() {
-  const [open, setOpen] = useState(-1);
-  const close = useCallback(() => setOpen(-1), []);
-  const onOpen: OpenFn = setOpen;
+  const [isOpen, setIsOpen] = useState(false);
+  const [index, setIndex] = useState(0);
+  const open: OpenFn = (i) => {
+    setIndex(i);
+    setIsOpen(true);
+  };
   const professional = projects.filter((p) => p.org).length;
+
   return (
-    <section id="projects" className="sec" data-galaxy="0.6" data-gx="projects" style={{ paddingTop: '170px' }}>
-      <div className="wrap">
-        <div className="g2" style={{ alignItems: 'end', marginBottom: '88px' }}>
-          <div style={{ gridColumn: 'span 8' }}>
-            <div className="sec-label rv"><i /><span className="mono gold">03 — Selected Projects</span></div>
-            <h2 className="disp rvt" style={{ fontSize: 'clamp(52px,7vw,104px)', lineHeight: 0.96, margin: 0, fontWeight: 600 }}>Selected Projects</h2>
-            <p className="lead rv" style={{ marginTop: '28px', fontSize: '21px', maxWidth: '640px' }}>
+    <Section id="projects" galaxy={0.6} gx="projects" className="pt-[170px] max-md:pt-24">
+      <Container>
+        <div className="mb-[88px] grid grid-cols-1 items-end gap-7 md:grid-cols-12 md:gap-12">
+          <div className="md:col-span-8">
+            <Eyebrow className="reveal">03 — Selected Projects</Eyebrow>
+            <h2 className="reveal-text m-0 font-display text-[clamp(52px,7vw,104px)] leading-[0.96] font-semibold tracking-[-0.035em]">
+              Selected Projects
+            </h2>
+            <Lead className="reveal mt-7 max-w-[640px] text-[21px]">
               Turning complex ideas into intelligent, scalable digital products.
-            </p>
+            </Lead>
           </div>
-          <div className="rv" style={{ gridColumn: 'span 4', textAlign: 'right' }}>
-            <p className="mono dim" style={{ margin: 0, lineHeight: 2 }}>
-              {String(projects.length).padStart(2, '0')} projects<br />
+          <div className="reveal md:col-span-4 md:text-right">
+            <p className="m-0 font-mono text-xs leading-loose tracking-[0.14em] text-zinc-400 uppercase">
+              {String(projects.length).padStart(2, '0')} projects
+              <br />
               {String(professional).padStart(2, '0')} from professional roles
             </p>
           </div>
         </div>
 
-        <Featured onOpen={onOpen} />
+        <Featured onOpen={open} />
 
-        <div className="two" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: '40px', marginBottom: '150px' }}>
-          <Column id="player" onOpen={onOpen} />
-          <Column id="wellness" onOpen={onOpen} />
+        <div className="mb-[150px] grid grid-cols-1 gap-10 md:grid-cols-2">
+          <Column id="player" onOpen={open} />
+          <Column id="wellness" onOpen={open} />
         </div>
 
-        <Alternating id="healthcare" onOpen={onOpen} height={520} />
-        <Alternating id="pharma" onOpen={onOpen} height={500} flip last />
-      </div>
-      {open >= 0 && <CaseStudyModal index={open} onClose={close} onNavigate={setOpen} />}
-    </section>
+        <Alternating id="healthcare" onOpen={open} className="mb-[150px]" previewClass="h-[520px]" />
+        <Alternating id="pharma" onOpen={open} flip previewClass="h-[500px]" />
+      </Container>
+
+      <CaseStudyModal open={isOpen} onOpenChange={setIsOpen} index={index} onNavigate={setIndex} />
+    </Section>
   );
 }

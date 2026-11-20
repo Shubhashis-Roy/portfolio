@@ -1,31 +1,35 @@
 import { experience } from '@/data/content';
-import Tags from './Tags';
+import { Container, Dot, Eyebrow, Heading2, Lead, Section, Tags } from './primitives';
 
 export default function Experience() {
   return (
-    <section id="experience" className="sec" data-galaxy="0.25" data-gx="experience">
-      <div className="wrap">
-        <div className="sec-label rv"><i /><span className="mono gold">02 — Experience</span></div>
-        <h2 className="h2 disp rvt" style={{ maxWidth: '820px', marginBottom: '64px' }}>
-          Products built inside real teams.
-        </h2>
-        <div className="xp">
+    <Section id="experience" galaxy={0.25} gx="experience">
+      <Container>
+        <Eyebrow className="reveal">02 — Experience</Eyebrow>
+        <Heading2 className="mb-16 max-w-[820px]">Products built inside real teams.</Heading2>
+        <div className="border-t border-white/10">
           {experience.map((x) => (
-            <div className="xp-row rv" key={x.company}>
-              <div style={{ gridColumn: 'span 4' }}>
-                <p className="xp-co">{x.current && <span className="dot" />}{x.company}</p>
-                <p className="mono dim" style={{ margin: '12px 0 0' }}>
+            <div
+              key={x.company}
+              className="reveal grid grid-cols-1 gap-3.5 border-b border-white/10 py-11 transition-[background] duration-400 hover:bg-linear-to-r hover:from-gold/4 hover:to-gold/0 md:grid-cols-12 md:gap-8"
+            >
+              <div className="md:col-span-4">
+                <p className="m-0 font-display text-[34px] font-semibold tracking-[-0.03em]">
+                  {x.current && <Dot />}
+                  {x.company}
+                </p>
+                <p className="mt-3 mb-0 font-mono text-xs tracking-[0.14em] text-zinc-400 uppercase">
                   {[x.current ? 'Current' : null, x.role, x.dates].filter(Boolean).join(' · ')}
                 </p>
               </div>
-              <div style={{ gridColumn: 'span 8' }}>
-                <p className="lead" style={{ fontSize: '17px' }}>{x.summary}</p>
-                <Tags items={x.tags} style={{ marginTop: '20px' }} />
+              <div className="md:col-span-8">
+                <Lead className="text-[17px]">{x.summary}</Lead>
+                <Tags items={x.tags} className="mt-5" />
               </div>
             </div>
           ))}
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }

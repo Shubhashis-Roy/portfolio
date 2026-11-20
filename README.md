@@ -1,6 +1,6 @@
 # Shubhashis Roy — Galaxy Portfolio
 
-Next.js (App Router) + TypeScript. Built from the original design export in `design-reference/`.
+Next.js (App Router) + TypeScript + Tailwind CSS v4 + shadcn/ui. Built from the original design export in `design-reference/`.
 
 ## Run
 
@@ -23,12 +23,24 @@ experience, projects, skills. Anything still in `[brackets]` is a placeholder.
 ## Structure
 
 ```
-src/app/            layout.tsx (metadata), page.tsx, globals.css (original design CSS)
+src/app/            layout.tsx (metadata), page.tsx, globals.css (Tailwind theme + design tokens)
 src/components/     page sections; Galaxy.tsx + Projects.tsx/CaseStudyModal.tsx are client components
+src/components/primitives.tsx   shared building blocks (Container, Section, Eyebrow, Tags, …)
+src/components/ui/  shadcn/ui components (Button, Badge, Card, Dialog), restyled to the design
 src/components/mockups/   decorative concept mockups for each project
 src/galaxy/GalaxyRenderer.ts   canvas starfield, black hole and galaxy animation
 public/fonts/       self-hosted Inter, JetBrains Mono, Space Grotesk
 ```
+
+## Styling
+
+- **Tailwind CSS v4** for all styling. Design tokens live in `src/app/globals.css` under `@theme`:
+  colours `ink`, `panel`, `gold`, `gold-soft`, `ember`; fonts `font-sans`, `font-display`, `font-mono`;
+  breakpoints `md` = 860px and `lg` = 1080px (e.g. `max-md:hidden`).
+- **shadcn/ui** components in `src/components/ui/`. Add more with `npx shadcn@latest add <name>`,
+  then restyle them to the palette.
+- Plain CSS remains only for the self-hosted fonts and the scroll-linked reveal animations
+  (`reveal`, `reveal-text`, `reveal-media`, `parallax`), which Tailwind has no utilities for.
 
 ## Deploy
 

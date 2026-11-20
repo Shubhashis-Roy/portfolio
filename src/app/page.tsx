@@ -10,9 +10,9 @@ import Footer from '@/components/Footer';
 
 export default function Home() {
   return (
-    <div className="pf">
+    <div data-galaxy-root className="relative min-h-full bg-ink text-white">
       <Galaxy intensity={1} animate />
-      <div className="ct">
+      <div className="relative z-1">
         <Nav />
         <main>
           <Hero />

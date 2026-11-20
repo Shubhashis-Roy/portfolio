@@ -1,42 +1,44 @@
+import { ArrowRight } from 'lucide-react';
 import { profile } from '@/data/content';
-import { ArrowRight } from './Icons';
+import { Button } from '@/components/ui/button';
+import { Container, Eyebrow, Lead } from './primitives';
 import ResumeButton from './ResumeButton';
 
-const linkStyle = { color: '#A1A1AA', textDecoration: 'none' };
+const linkClass = 'font-mono text-xs tracking-[0.14em] text-zinc-400 uppercase no-underline transition-colors hover:text-gold';
 
 function Social({ url, label }: { url: string; label: string }) {
   return url ? (
-    <a href={url} target="_blank" rel="noreferrer" style={linkStyle} className="mono">{label} ↗</a>
+    <a href={url} target="_blank" rel="noreferrer" className={linkClass}>{label} ↗</a>
   ) : (
-    <a href="#contact" style={linkStyle} className="mono">{label} [URL]</a>
+    <a href="#contact" className={linkClass}>{label} [URL]</a>
   );
 }
 
 export default function Contact() {
   return (
-    <section id="contact" className="contact" data-galaxy="0.85" data-gx="contact">
-      <div className="wrap">
-        <div className="sec-label rv" style={{ justifyContent: 'center' }}>
-          <i /><span className="mono gold">05 — Contact</span><i style={{ transform: 'scaleX(-1)' }} />
-        </div>
-        <h2 className="disp rvt" style={{ fontSize: 'clamp(48px,7vw,108px)', lineHeight: 0.98, margin: '0 auto', maxWidth: '1000px', fontWeight: 600 }}>
+    <section id="contact" data-galaxy={0.85} data-gx="contact" className="pt-[200px] pb-40 text-center max-md:pt-[130px] max-md:pb-[110px]">
+      <Container>
+        <Eyebrow center className="reveal">05 — Contact</Eyebrow>
+        <h2 className="reveal-text mx-auto my-0 max-w-[1000px] font-display text-[clamp(48px,7vw,108px)] leading-[0.98] font-semibold tracking-[-0.035em]">
           Let’s build something{' '}
-          <span style={{ color: '#F2B860', textShadow: '0 0 60px rgba(242,184,96,0.4)' }}>intelligent.</span>
+          <span className="text-gold [text-shadow:0_0_60px_rgba(242,184,96,0.4)]">intelligent.</span>
         </h2>
-        <p className="lead rv" style={{ maxWidth: '560px', margin: '28px auto 0' }}>
+        <Lead className="reveal mx-auto mt-7 max-w-[560px]">
           Open to conversations about AI products, full-stack engineering and real-time systems.
-        </p>
-        <div className="rv" style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap', marginTop: '44px' }}>
-          <a className="btn btn-gold" href={`mailto:${profile.email || 'your.email@domain.com'}`}>
-            {profile.email || '[your.email@domain.com]'} <ArrowRight />
-          </a>
+        </Lead>
+        <div className="reveal mt-11 flex flex-wrap justify-center gap-3.5">
+          <Button asChild>
+            <a href={`mailto:${profile.email || 'your.email@domain.com'}`}>
+              {profile.email || '[your.email@domain.com]'} <ArrowRight size={18} aria-hidden />
+            </a>
+          </Button>
           <ResumeButton icon={false} />
         </div>
-        <div className="rv" style={{ display: 'flex', justifyContent: 'center', gap: '28px', marginTop: '40px', flexWrap: 'wrap' }}>
+        <div className="reveal mt-10 flex flex-wrap justify-center gap-7">
           <Social url={profile.linkedin} label="LinkedIn" />
           <Social url={profile.github} label="GitHub" />
         </div>
-      </div>
+      </Container>
     </section>
   );
 }
