@@ -19,7 +19,7 @@ export default function Nav() {
           <span className="flex size-9 items-center justify-center rounded-full border border-gold/50 font-display text-sm font-semibold text-gold shadow-[0_0_24px_rgb(var(--gold-rgb)/0.18)]">
             {profile.initials}
           </span>
-          <span className="text-[15px] font-semibold">{profile.name}</span>
+          <span className="text-[15px] font-semibold whitespace-nowrap">{profile.name}</span>
         </a>
         <nav className="flex gap-1.5 max-md:hidden" aria-label="Primary">
           {links.map(([href, label]) => (

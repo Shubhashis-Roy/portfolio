@@ -43,7 +43,7 @@ export function Eyebrow({ children, className, center }: { children: React.React
   return (
     <div className={cn('mb-7 flex items-center gap-3.5', center && 'justify-center', className)}>
       <Rule />
-      <Mono tone="gold">{children}</Mono>
+      <Mono tone="gold" className="text-[clamp(14px,1.25vw,17px)] font-medium">{children}</Mono>
       {center && <Rule flip />}
     </div>
   );
@@ -59,7 +59,7 @@ export function Heading2({ className, ...props }: React.ComponentProps<'h2'>) {
 }
 
 export function Lead({ className, ...props }: React.ComponentProps<'p'>) {
-  return <p className={cn('m-0 text-[19px] leading-[1.65] text-zinc-400', className)} {...props} />;
+  return <p className={cn('m-0 text-[19px] leading-[1.65] text-zinc-300', className)} {...props} />;
 }
 
 /** Tag list; entries in [brackets] render as dashed placeholders. */

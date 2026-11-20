@@ -9,12 +9,12 @@ const badgeVariants = cva(
     variants: {
       variant: {
         /** Technology / skill tag */
-        tag: "h-8 cursor-default border-white/12 bg-white/3 px-[13px] text-zinc-300 hover:-translate-y-0.5 hover:border-gold/65 hover:bg-gold/6 hover:text-gold hover:shadow-[0_0_22px_rgb(var(--gold-rgb)/0.16)]",
+        tag: "h-8 cursor-default border-white/12 bg-ink/80 backdrop-blur-sm px-[13px] text-zinc-300 hover:-translate-y-0.5 hover:border-gold/65 hover:bg-gold/6 hover:text-gold hover:shadow-[0_0_22px_rgb(var(--gold-rgb)/0.16)]",
         /** Content still to be filled in, e.g. "[Add stack]" */
         placeholder:
-          "h-8 cursor-default border-dashed border-white/12 bg-white/3 px-[13px] text-zinc-400 hover:-translate-y-0.5 hover:border-gold/65 hover:text-gold",
+          "h-8 cursor-default border-dashed border-white/12 bg-ink/80 backdrop-blur-sm px-[13px] text-zinc-400 hover:-translate-y-0.5 hover:border-gold/65 hover:text-gold",
         /** Organisation / owner pill */
-        org: "gap-2 border-gold/30 bg-gold/6 px-3 py-1.5 text-gold",
+        org: "gap-2 border-gold/30 bg-[color-mix(in_oklab,var(--color-gold)_10%,var(--color-ink))] px-3 py-1.5 text-gold",
       },
     },
     defaultVariants: {

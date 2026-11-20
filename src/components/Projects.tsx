@@ -37,7 +37,7 @@ function Article({ className, ...props }: React.ComponentProps<'article'>) {
 function Preview({ p, className }: { p: Project; className: string }) {
   const Mockup = MOCKUPS[p.id];
   return (
-    <div className={cn('reveal-media relative isolate overflow-hidden rounded-[28px] border border-white/9 bg-panel', className)}>
+    <div data-no-halo className={cn('reveal-media relative isolate overflow-hidden rounded-[28px] border border-white/9 bg-panel', className)}>
       <span className="absolute top-[18px] left-5 z-3 rounded-full border border-white/10 bg-ink/70 px-2.5 py-[7px] font-mono text-[10.5px] tracking-[.14em] text-zinc-400 uppercase">
         {p.previewLabel}
       </span>
@@ -79,7 +79,7 @@ function Org({ p, dot }: { p: Project; dot?: boolean }) {
 }
 
 function Description({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <p className={cn('mt-[18px] mb-0 text-[17px] leading-[1.65] text-zinc-400', className)}>{children}</p>;
+  return <p className={cn('mt-[18px] mb-0 text-[17px] leading-[1.65] text-zinc-300', className)}>{children}</p>;
 }
 
 function Actions({ p, onOpen }: { p: Project; onOpen: () => void }) {

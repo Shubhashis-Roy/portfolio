@@ -101,7 +101,7 @@
   --radius: 0.625rem;
   --background: rgb(var(--ink-rgb));
   --foreground: #ffffff;
-  --card: rgb(var(--panel-rgb) / 0.72);
+  --card: rgb(var(--panel-rgb) / 0.88);
   --card-foreground: #ffffff;
   --popover: rgb(var(--panel-rgb));
   --popover-foreground: #ffffff;
@@ -142,6 +142,24 @@
   body {
     @apply bg-background text-foreground antialiased;
     transition: background-color 0.4s ease;
+  }
+  /* Readability: the black hole stays in the sky while sections scroll over it, so page text gets a
+     soft dark halo. Zero-specificity :where() + base layer, so any text-shadow utility still wins. */
+  main :where(h1, h2, h3, h4, p, li, span, a, b, strong, em, small, dd, dt) {
+    /* hugs the glyphs only — no boxes over empty sky */
+    text-shadow:
+      0 0 1px rgb(var(--ink-rgb)),
+      0 0 4px rgb(var(--ink-rgb) / 0.95),
+      0 0 10px rgb(var(--ink-rgb) / 0.9),
+      0 1px 22px rgb(var(--ink-rgb) / 0.8);
+  }
+  /* …but not on filled controls or the decorative project mockups. */
+  main [data-slot="button"],
+  main [data-slot="button"] *,
+  main [data-slot="badge"],
+  main [data-no-halo],
+  main [data-no-halo] * {
+    text-shadow: none;
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {

@@ -459,7 +459,9 @@ export class GalaxyRenderer {
         }
       }
     }
-    const bhA = k * (narrow ? 0.6 : 1) * (0.42 + 0.58 * this.intensityAt(by, secs));
+    // Full brightness while the hero is on screen; dimmer once content sections scroll over it.
+    const heroOn = h ? sm(h.bottom / H, 0.25, 0.9) : 0;
+    const bhA = k * (narrow ? 0.6 : 1) * (0.42 + 0.58 * this.intensityAt(by, secs)) * (0.32 + 0.68 * heroOn);
     // Moon: starts low and to the right of the black hole, then (with scroll) rises, swings in behind it,
     // shrinks and fades out. Drawn before the black hole so the shadow and disk pass in front of it.
     if (!narrow) {
@@ -521,12 +523,12 @@ export class GalaxyRenderer {
     ctx.globalCompositeOperation = 'source-over';
     // Readability veil: darkening under the left text column in the hero
     if (h && !narrow) {
-      const vg = ctx.createLinearGradient(h.left, 0, h.left + h.width * 0.62, 0);
-      vg.addColorStop(0, this.c('rgba(5,5,5,0.6)'));
-      vg.addColorStop(0.55, this.c('rgba(5,5,5,0.32)'));
+      const vg = ctx.createLinearGradient(h.left, 0, h.left + h.width * 0.72, 0);
+      vg.addColorStop(0, this.c('rgba(5,5,5,0.72)'));
+      vg.addColorStop(0.6, this.c('rgba(5,5,5,0.5)'));
       vg.addColorStop(1, this.c('rgba(5,5,5,0)'));
       ctx.fillStyle = vg;
-      ctx.fillRect(h.left, Math.max(0, h.top), h.width * 0.6, Math.min(H, h.height));
+      ctx.fillRect(h.left, Math.max(0, h.top), h.width * 0.72, Math.min(H, h.height));
     }
   }
 }

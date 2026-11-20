@@ -9,7 +9,7 @@
 export const profile = {
   name: 'Shubhashis Roy',
   initials: 'SR',
-  role: 'AI Full-Stack Engineer',
+  role: 'Senior Software Engineer',
   experience: '3 years and 11 months',
   experienceShort: '3y 11m',
   email: '', // e.g. 'you@domain.com' — shows "[your.email@domain.com]" until set
