@@ -8,11 +8,11 @@ export default function Skills() {
       <Container>
         <div className="grid grid-cols-1 items-end gap-7 md:grid-cols-12 md:gap-12">
           <div className="md:col-span-7">
-            <Eyebrow className="reveal">04 — Skills</Eyebrow>
+            <Eyebrow className="reveal">03 - Tech Skills</Eyebrow>
             <Heading2>The stack behind the work.</Heading2>
           </div>
           <Lead className="reveal md:col-span-5">
-            Technologies used across the projects above — grouped by where they sit in the product.
+            Technologies used across the projects above - grouped by where they sit in the product.
           </Lead>
         </div>
         <div className="mt-16 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">

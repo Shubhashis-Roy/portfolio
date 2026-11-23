@@ -18,32 +18,54 @@ export const profile = {
   resumeUrl: '', // e.g. '/resume.pdf' — put the PDF in /public
 };
 
+/** Ids of the case studies; shared by `Experience.projectId` and `Project.id`. */
+export type ProjectId = 'crushes' | 'player' | 'wellness' | 'healthcare' | 'pharma';
+
 export type Experience = {
   company: string;
   current?: boolean;
   role: string;
   dates: string;
+  /** Office + working arrangement, e.g. 'Austin, USA · Remote' */
+  location?: string;
   summary: string;
+  /** Short highlights — keep each to roughly 60 characters so they stay two lines. */
+  highlights?: string[];
   tags: string[];
+  /** Products built in this role — each rendered in full inside the Experience section. */
+  projectIds?: ProjectId[];
 };
 
 export const experience: Experience[] = [
   {
     company: 'Medici',
     current: true,
-    role: '[Role title]',
-    dates: '[Start date]',
+    role: 'Senior Software Engineer',
+    dates: 'January 2026 - Present',
+    location: 'Austin, USA · Remote',
     summary:
       'Building an AI-powered healthcare platform that streamlines clinical intake, AI-assisted treatment plans, physician review, patient approval and pharmacy fulfillment.',
-    tags: ['Next.js', 'TypeScript', 'OpenAI', 'Anthropic Claude', 'AWS Bedrock', 'Supabase'],
+    highlights: [
+      'AI intake consult that files a structured clinical record.',
+      'Interview split from record-writing, so gaps bounce back live.',
+      'Durable AI plan queue with claim, retry and dead-letter.',
+      'Physician portal: approve, revise, reject, clinical override.',
+      'Netvalve payments: hosted checkout, refunds and reconciliation.',
+      'Pharmetika pharmacy API: order submit and webhook status sync.',
+      'UPS shipping: labels, rating, declared-value insurance, tracking.',
+    ],
+    tags: ['Next.js', 'TypeScript', 'Bun', 'Hono', 'Node.js', 'Socket.IO', 'OpenAI', 'Anthropic Claude', 'AWS Bedrock', 'Drizzle', 'Supabase', 'Postgres', 'AWS', 'Docker'],
+    projectIds: ['healthcare'],
   },
   {
     company: 'Appycodes',
-    role: '[Role title]',
-    dates: '[Dates]',
+    role: 'Full Stack Software Engineer',
+    dates: 'December 2023 - December 2025',
+    location: 'Siliguri, India',
     summary:
-      'Worked on an AI-powered player intelligence platform for scouting, predictive performance analysis and strategic team management.',
-    tags: ['Predictive analytics', 'AI recommendations', 'Dashboards'],
+      'Full-stack engineer on two AI products - sports decision support, and Zonely, a mental wellness platform.',
+    tags: ['React', 'Next.js', 'TypeScript', 'Node.js', 'Express.js', 'Socket.IO', 'WebRTC', 'MySQL', 'GPT-4.1', 'RAG', 'Qdrant', 'Real-time chat', 'Voice calls', 'AWS', 'Docker'],
+    projectIds: ['player', 'wellness'],
   },
   {
     company: 'Kenneth Tech',
@@ -52,12 +74,14 @@ export const experience: Experience[] = [
     summary:
       'Built responsive interfaces and backend services for a secure, scalable pharmaceutical e-commerce platform covering product management and transactions.',
     tags: ['E-commerce', 'Full-stack', 'Backend services'],
+    projectIds: ['pharma'],
   },
 ];
 
 export type Project = {
-  id: 'crushes' | 'player' | 'wellness' | 'healthcare' | 'pharma';
-  num: string;
+  id: ProjectId;
+  /** 'personal' projects get their own section; 'professional' ones render inside Experience. */
+  kind: 'personal' | 'professional';
   /** Title shown on the card */
   name: string;
   /** Full title shown in the case-study modal */
@@ -82,8 +106,12 @@ export type Project = {
   flow: string[];
   /** Company products with no public link */
   privateProduct?: boolean;
+  /** Skip the concept mockup for this one (Experience section). */
+  hideMockup?: boolean;
   liveUrl?: string;
   repoUrl?: string;
+  /** Where the product ships - grouped per app, e.g. 'Consumer app' -> iOS / Android. */
+  links?: { group: string; label: string; url: string }[];
   previewLabel: string;
   /** Your role — shown in the modal (placeholder until filled) */
   myRole?: string;
@@ -92,9 +120,9 @@ export type Project = {
 export const projects: Project[] = [
   {
     id: 'crushes',
-    num: '01',
+    kind: 'personal',
     name: 'Crushes',
-    title: 'Crushes — Social Matching Platform',
+    title: 'Crushes - Social Matching Platform',
     short: 'Crushes',
     subtitle: 'Social Matching Platform',
     category: 'Social / Real-Time Application',
@@ -111,43 +139,60 @@ export const projects: Project[] = [
   },
   {
     id: 'player',
-    num: '02',
+    kind: 'professional',
     name: 'AI-Powered Player Intelligence Platform',
     title: 'AI-Powered Player Intelligence Platform',
     short: 'Player Intelligence',
     category: 'AI / Sports Analytics',
     org: 'Professional work · Appycodes',
     owner: 'Professional work · Appycodes',
-    desc: 'An AI-powered decision-support system designed to transform player scouting, predictive performance analysis, and team management through intelligent recommendations.',
-    caps: ['Player performance analysis', 'Player fitness indicators', 'Predictive analytics', 'Player scouting', 'Strategic team management', 'Play / bench / trade / release recommendations'],
-    features: ['Player performance analysis', 'Player fitness indicators', 'Predictive analytics', 'Player scouting', 'Strategic team management', 'Recommendations to play, bench, trade, or release players'],
-    tags: ['Predictive analytics', 'Recommendations', '[Add stack]'],
-    stack: ['[Add stack]'],
-    flow: ['Player data', 'Performance & fitness analysis', 'Predictive models', 'AI recommendations', 'Team decisions'],
+    desc: 'A decision-support system for a professional T20 cricket franchise. It scouts players, predicts form from performance and fitness indicators, and answers the questions a team actually asks: who to trade and for whom, which eleven gives the best odds against a specific opponent, and who to bowl when the match is on the line.',
+    caps: ['Player scouting and valuation', 'Predictive performance modelling', 'Fitness and workload indicators', 'Best eleven for a given opponent', 'Trade analysis between franchises', 'Death-over bowling recommendations'],
+    features: ['Player scouting and valuation', 'Predictive performance modelling', 'Fitness and workload indicators', 'Best eleven for a given opponent', 'Trade analysis between franchises', 'Death-over bowling recommendations', 'Play, bench, trade or release calls', 'Win-probability driven team decisions'],
+    tags: ['Predictive analytics', 'AI recommendations'],
+    stack: [],
+    flow: ['Player & match data', 'Form and fitness models', 'Win-probability simulation', 'AI recommendations', 'Squad & match decisions'],
     privateProduct: true,
+    hideMockup: true,
     previewLabel: 'Concept dashboard · illustrative data',
+    myRole:
+      'Developed the decision-support system end to end - the scouting and performance-analysis surfaces, the predictive ' +
+      'models over form and fitness indicators, and the recommendation layer that turns them into play, bench, trade or ' +
+      'release calls, squad selection against a given opponent, and bowling choices in the closing overs.',
   },
   {
     id: 'wellness',
-    num: '03',
-    name: 'AI-Powered Mental Wellness Assistant',
-    title: 'AI-Powered Mental Wellness Assistant',
-    short: 'Wellness Assistant',
+    kind: 'professional',
+    name: 'Zonely - AI Mental Wellness Platform',
+    title: 'Zonely - AI Mental Wellness Platform',
+    short: 'Zonely',
     category: 'Generative AI / RAG',
-    owner: 'Generative AI project',
-    desc: 'A context-aware AI mental wellness assistant powered by GPT-4.1 and a Qdrant-based RAG pipeline, delivering personalized responses through intelligent retrieval and conversational interactions.',
-    caps: ['GPT-4.1 conversations', 'Retrieval-Augmented Generation', 'Qdrant vector search', 'Real-time chat', 'Voice calls'],
-    features: ['GPT-4.1 conversations', 'Retrieval-Augmented Generation (RAG)', 'Qdrant vector retrieval', 'Real-time chat', 'Voice calls'],
-    tags: ['GPT-4.1', 'RAG', 'Qdrant', 'Real-time chat', 'Voice'],
-    stack: ['GPT-4.1', 'RAG', 'Qdrant', 'Real-time chat', 'Voice calls'],
-    flow: ['User message / voice', 'Qdrant retrieval', 'Context assembly', 'GPT-4.1 response'],
-    liveUrl: '',
-    repoUrl: '',
+    org: 'Professional work · Appycodes',
+    owner: 'Professional work · Appycodes',
+    desc: 'A wellness platform where people bring a problem - career, stress, low mood - and talk it through with a vetted expert over chat or voice. When that expert is offline, their AI stand-in carries the conversation, grounded in a GPT-4.1 and Qdrant RAG pipeline. A wallet handles balances and payouts, and a quiz game pays out rewards.',
+    caps: ['Expert matching by problem area', 'Real-time chat with experts', 'In-app voice calls', 'AI stand-in when the expert is offline', 'GPT-4.1 responses grounded in RAG', 'Wallet, balances and payouts'],
+    features: ['Expert matching by problem area', 'Real-time chat with experts', 'In-app voice calls', 'AI stand-in when the expert is offline', 'GPT-4.1 responses grounded in RAG', 'Qdrant vector retrieval', 'Wallet, balances and payouts', 'Quiz game with reward payouts'],
+    tags: ['GPT-4.1', 'RAG', 'Qdrant', 'Real-time chat', 'Voice calls', 'Wallet', 'Rewards'],
+    stack: ['GPT-4.1', 'RAG', 'Qdrant', 'Real-time chat', 'Voice calls', 'Wallet', 'Rewards'],
+    flow: ['User describes a problem', 'Matched with an expert', 'Chat or voice call', 'AI stand-in when offline', 'Qdrant retrieval', 'GPT-4.1 response'],
+    privateProduct: true,
+    hideMockup: true,
+    liveUrl: 'https://www.zonely.app/',
+    links: [
+      { group: 'Zonely · consumer app', label: 'iOS', url: 'https://apps.apple.com/in/app/zonely-casual-conversations/id6748334295' },
+      { group: 'Zonely · consumer app', label: 'Android', url: 'https://www.zonely.app/' },
+      { group: 'Zonely Buddy · expert app', label: 'iOS', url: 'https://apps.apple.com/in/app/zonely-buddy/id6748642878' },
+      { group: 'Zonely Buddy · expert app', label: 'Android', url: 'https://play.google.com/store/apps/details?id=com.zonelybuddyapp&hl=en_IN' },
+    ],
     previewLabel: 'Concept interface',
+    myRole:
+      'Built the GPT-4.1 RAG pipeline on Qdrant that grounds each reply in the expert\'s own material, so the AI stand-in ' +
+      'answers in their voice rather than generically. I also implemented the real-time chat and voice-call layer, the ' +
+      'wallet that tracks balances, top-ups and payouts, and the quiz and rewards system.',
   },
   {
     id: 'healthcare',
-    num: '04',
+    kind: 'professional',
     name: 'AI-Powered Healthcare Platform',
     title: 'AI-Powered Healthcare Platform',
     short: 'Healthcare Platform',
@@ -156,16 +201,24 @@ export const projects: Project[] = [
     owner: 'Professional experience · product development at Medici',
     desc: 'An AI-powered healthcare platform designed to streamline clinical consultations, patient intake, treatment-plan generation, physician review, and pharmacy fulfillment.',
     caps: ['AI-powered clinical intake', 'AI-assisted treatment plans', 'Physician review workflows', 'Patient approval & checkout', 'Secure patient messaging', 'Pharmacy fulfillment', 'Payment & shipping integrations'],
-    features: ['AI-powered clinical intake', 'AI-assisted treatment-plan generation', 'Physician review workflows', 'Patient approval and checkout', 'Secure patient messaging', 'Pharmacy fulfillment', 'Payment and shipping integrations'],
-    tags: ['Next.js', 'React', 'TypeScript', 'OpenAI', 'Anthropic Claude', 'AWS Bedrock', 'Vercel AI SDK', 'Supabase', 'Drizzle ORM'],
-    stack: ['Next.js', 'React', 'TypeScript', 'OpenAI', 'Anthropic Claude', 'AWS Bedrock', 'Vercel AI SDK', 'Supabase', 'Drizzle ORM'],
-    flow: ['Clinical intake', 'AI treatment plan', 'Physician review', 'Patient approval & checkout', 'Pharmacy fulfillment'],
+    features: ['AI-powered clinical intake', 'AI-assisted treatment-plan generation', 'Physician review workflows', 'Clinical override for escalated intakes', 'Patient approval and checkout', 'Secure patient messaging', 'Scheduled protocol check-ins', 'Renewal, reorder and re-intake flows', 'Pharmacy fulfillment', 'Payment and shipping integrations'],
+    tags: ['Next.js', 'React', 'TypeScript', 'Bun', 'Hono', 'OpenAI', 'Anthropic Claude', 'AWS Bedrock', 'Vercel AI SDK', 'Supabase', 'Drizzle ORM', 'Postgres'],
+    stack: ['Next.js', 'React', 'TypeScript', 'Bun', 'Hono', 'OpenAI', 'Anthropic Claude', 'AWS Bedrock', 'Vercel AI SDK', 'Supabase', 'Drizzle ORM', 'Postgres'],
+    flow: ['AI intake consult', 'AI treatment plan', 'Member proposal', 'Physician review', 'Approval & checkout', 'Pharmacy or UPS fulfilment', 'Protocol check-ins'],
     privateProduct: true,
+    hideMockup: true,
+    liveUrl: 'https://www.medicipeptides.com/',
     previewLabel: 'Concept preview · not product screenshots',
+    myRole:
+      'Senior engineer working across a Bun + Hono API and two Next.js apps - AI, payment and shipping integrations. ' +
+      'I built the AI consult pipeline, keeping the intake interview separate from the record builder so missing answers ' +
+      'surface while the patient is still in session, plus the durable job queue behind treatment-plan generation. ' +
+      'I also own the commerce and fulfilment path - Netvalve checkout and refunds, Pharmetika order submission and status ' +
+      'sync, and the UPS shipping lane - all routed through a single fulfilment transition so the three channels can never drift.',
   },
   {
     id: 'pharma',
-    num: '05',
+    kind: 'professional',
     name: 'Pharmaceutical E-Commerce Platform',
     title: 'Pharmaceutical E-Commerce Platform',
     short: 'Pharma E-Commerce',
@@ -179,9 +232,16 @@ export const projects: Project[] = [
     stack: ['E-commerce', 'Full-stack', '[Add stack]'],
     flow: ['Product listing', 'Product details', 'Cart', 'Checkout'],
     privateProduct: true,
+    hideMockup: true,
     previewLabel: 'Concept storefront · placeholder products',
   },
 ];
+
+/** Side projects — shown in the "Personal Projects" section. */
+export const personalProjects = projects.filter((p) => p.kind === 'personal');
+
+/** Products built in a role — shown inside that role's Experience entry. */
+export const projectById = (id: ProjectId) => projects.find((p) => p.id === id);
 
 export const skills: { group: string; items: string[] }[] = [
   { group: 'Frontend', items: ['Next.js', 'React', 'TypeScript'] },
@@ -199,7 +259,7 @@ export const focusAreas = [
   {
     icon: 'realtime' as const,
     title: 'Real-time products',
-    text: 'Live matching, chat and video calling with WebRTC and Socket.IO — fast, responsive, event-driven.',
+    text: 'Live matching, chat and video calling with WebRTC and Socket.IO - fast, responsive, event-driven.',
   },
   {
     icon: 'platform' as const,

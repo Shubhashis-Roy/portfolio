@@ -2,6 +2,8 @@
 
 Next.js (App Router) + TypeScript + Tailwind CSS v4 + shadcn/ui. Built from the original design export in `design-reference/`.
 
+Page order: **Hero → About → Experience → Tech Skills → Personal Projects → Contact.**
+
 ## Run
 
 ```bash
@@ -16,6 +18,14 @@ npm start        # serve the production build
 All text lives in **`src/data/content.ts`**: profile, email, LinkedIn/GitHub, resume link,
 experience, projects, skills. Anything still in `[brackets]` is a placeholder.
 
+Projects are split by `kind`:
+
+- `kind: 'professional'` — rendered **inside the Experience section**, under the role that built it.
+  Link it with `projectIds: ['id', ...]` on the matching `experience` entry; a role can own several
+  products and they stack with a divider between them. Set `hideMockup: true` to drop the concept mockup.
+- `kind: 'personal'` — rendered in the **Personal Projects** section. The first one is the featured,
+  full-width card; numbering (01, 02, …) follows array order.
+
 - Resume: put `resume.pdf` in `public/` and set `resumeUrl: '/resume.pdf'`.
 - Project links: set `liveUrl` / `repoUrl`. Empty values show the disabled "View Project" button.
 - Your role on a project: set `myRole` (shown in the case-study popup).
@@ -24,8 +34,11 @@ experience, projects, skills. Anything still in `[brackets]` is a placeholder.
 
 ```
 src/app/            layout.tsx (metadata), page.tsx, globals.css (Tailwind theme + design tokens)
-src/components/     page sections; Galaxy.tsx + Projects.tsx/CaseStudyModal.tsx are client components
-src/components/primitives.tsx   shared building blocks (Container, Section, Eyebrow, Tags, …)
+src/components/     page sections; Galaxy.tsx, ThemeToggle, BackToTop and the
+                    CaseStudy* files are the only client components
+src/components/primitives.tsx     shared building blocks (Container, Section, Eyebrow, Tags, …)
+src/components/project-parts.tsx  project showcase pieces, shared by Experience and Projects
+src/components/CaseStudyProvider.tsx  owns the one case-study dialog for the whole page
 src/components/ui/  shadcn/ui components (Button, Badge, Card, Dialog), restyled to the design
 src/components/mockups/   decorative concept mockups for each project
 src/galaxy/GalaxyRenderer.ts   canvas starfield, scroll-driven black hole, astronaut and shooting stars

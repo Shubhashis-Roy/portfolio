@@ -9,12 +9,12 @@ export default function About() {
       <Container>
         <div className="grid grid-cols-1 gap-7 md:grid-cols-12 md:gap-12">
           <div className="reveal md:col-span-4">
-            <Eyebrow>01 — About</Eyebrow>
+            <Eyebrow>01 - About</Eyebrow>
           </div>
           <div className="md:col-span-8">
             <Heading2>Building where AI meets product engineering.</Heading2>
             <Lead className="reveal mt-8 max-w-[720px]">
-              I design and build full-stack products end to end — from real-time communication and conversational AI
+              I design and build full-stack products end to end - from real-time communication and conversational AI
               to clinical workflows and commerce platforms. My work connects large language models, retrieval
               pipelines, and real-time infrastructure to interfaces people actually enjoy using.
             </Lead>

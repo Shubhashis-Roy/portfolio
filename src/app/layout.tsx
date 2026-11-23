@@ -4,10 +4,10 @@ import { THEME_STORAGE_KEY } from '@/galaxy/palette';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: `${profile.name} — ${profile.role}`,
-  description: `${profile.name} — ${profile.role} building scalable web applications, intelligent AI systems and real-time digital products.`,
+  title: `${profile.name} - ${profile.role}`,
+  description: `${profile.name} - ${profile.role} building scalable web applications, intelligent AI systems and real-time digital products.`,
   openGraph: {
-    title: `${profile.name} — ${profile.role}`,
+    title: `${profile.name} - ${profile.role}`,
     description: 'Engineering intelligent digital experiences.',
     type: 'website',
   },

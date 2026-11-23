@@ -30,7 +30,7 @@ export default function Contact() {
         className="pointer-events-none absolute bottom-0 left-1/2 z-0 block h-auto w-[max(100%,1200px)] max-w-none -translate-x-1/2 [mask-image:linear-gradient(to_bottom,transparent_0%,transparent_20%,#000_40%)] max-md:w-[860px]"
       />
       <Container className="relative z-1">
-        <Eyebrow center className="reveal">05 — Contact</Eyebrow>
+        <Eyebrow center className="reveal">05 - Contact</Eyebrow>
         <h2 className="reveal-text mx-auto my-0 max-w-[1000px] font-display text-[clamp(48px,7vw,108px)] leading-[0.98] font-semibold tracking-[-0.035em]">
           Let’s build something{' '}
           <span className="text-gold [text-shadow:0_0_60px_rgb(var(--gold-rgb)/0.4)]">intelligent.</span>

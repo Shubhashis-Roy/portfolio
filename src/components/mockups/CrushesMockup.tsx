@@ -41,7 +41,7 @@ export default function CrushesMockup() {
 <div className="flex-1 flex flex-col gap-[7px] p-[12px]">
 <span className="self-start max-w-[78%] p-[8px_11px] rounded-[14px_14px_14px_4px] bg-[#1a1a1a] leading-[1.4]">Hey! That hiking photo looks amazing.</span>
 <span className="self-end max-w-[78%] p-[8px_11px] rounded-[14px_14px_4px_14px] bg-[var(--color-gold)] text-[var(--color-ink)] leading-[1.4]">Thanks! Where was your last trip?</span>
-<span className="self-start max-w-[78%] p-[8px_11px] rounded-[14px_14px_14px_4px] bg-[#1a1a1a] leading-[1.4]">Long story — video call later?</span>
+<span className="self-start max-w-[78%] p-[8px_11px] rounded-[14px_14px_14px_4px] bg-[#1a1a1a] leading-[1.4]">Long story - video call later?</span>
 <span className="self-end max-w-[78%] p-[8px_11px] rounded-[14px_14px_4px_14px] bg-[var(--color-gold)] text-[var(--color-ink)] leading-[1.4]">Sure, 8 pm works.</span>
 </div>
 <div className="m-[0_10px_12px] h-[36px] rounded-[999px] [border:1px_solid_rgba(255,255,255,0.12)] flex items-center justify-between p-[0_6px_0_14px] text-[#71717A]">Message…<span className="w-[26px] h-[26px] rounded-[50%] bg-[var(--color-ember)] flex items-center justify-center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--color-ink)" strokeWidth="2.6" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span></div>

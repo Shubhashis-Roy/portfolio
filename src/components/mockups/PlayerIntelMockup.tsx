@@ -6,7 +6,6 @@ export default function PlayerIntelMockup() {
   return (
 <div className={cn(pvIn, "bg-[radial-gradient(500px_300px_at_90%_0%,rgb(var(--gold-rgb)/0.16),rgb(var(--gold-rgb)/0)_70%),var(--color-panel)]")}>
 <div className="parallax absolute inset-[64px_24px_24px] rounded-[18px] bg-[#0d0d0d] [border:1px_solid_rgba(255,255,255,0.08)] flex overflow-hidden">
-<div className="max-md:hidden w-[48px] [border-right:1px_solid_rgba(255,255,255,0.06)] flex flex-col items-center gap-[14px] pt-[16px]"><span className="w-[20px] h-[20px] rounded-[6px] bg-[var(--color-gold)]"></span><span className="w-[16px] h-[16px] rounded-[5px] bg-[#262626]"></span><span className="w-[16px] h-[16px] rounded-[5px] bg-[#262626]"></span><span className="w-[16px] h-[16px] rounded-[5px] bg-[#262626]"></span></div>
 <div className="flex-1 p-[16px] grid grid-cols-[repeat(2,minmax(0,1fr))] grid-rows-[auto_1fr_1fr] gap-[12px] text-[11px] min-w-0">
 <div className="col-span-2 flex justify-between items-center"><b className="font-display text-[15px]">Squad Intelligence</b><span className="[font:9.5px_'JetBrains_Mono'] text-[var(--color-gold)] [border:1px_solid_rgb(var(--gold-rgb)/0.35)] p-[4px_8px] rounded-[999px]">AI INSIGHTS</span></div>
 <div className="[border:1px_solid_rgba(255,255,255,0.07)] rounded-[12px] p-[12px] flex flex-col gap-[8px]">

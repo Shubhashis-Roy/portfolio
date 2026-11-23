@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Caps, Mono, Note, Tags } from './primitives';
+import { StoreLinks } from './project-parts';
 
 type Props = {
   open: boolean;
@@ -62,7 +63,7 @@ export default function CaseStudyModal({ open, onOpenChange, index, onNavigate }
         <div className="relative border-b border-white/8 bg-[radial-gradient(700px_320px_at_85%_0%,rgb(var(--ember-rgb)/0.18),rgb(var(--ember-rgb)/0)_70%),radial-gradient(500px_260px_at_10%_100%,rgb(var(--gold-rgb)/0.1),rgb(var(--gold-rgb)/0)_70%)] px-16 pt-16 pb-12 max-md:px-6 max-md:pt-10 max-md:pb-8">
           <div className="flex items-start justify-between gap-4">
             <div className="flex flex-wrap items-center gap-4">
-              <Mono tone="gold">{p.num} — Case study</Mono>
+              <Mono tone="gold">Case study</Mono>
               <Mono>{p.category}</Mono>
             </div>
             <DialogClose asChild>
@@ -100,15 +101,17 @@ export default function CaseStudyModal({ open, onOpenChange, index, onNavigate }
                   </span>
                 ))}
               </div>
-              <Note className="mt-3">Concept view assembled from the project description — replace with your architecture diagram.</Note>
+              <Note className="mt-3">Simplified view of the end-to-end flow.</Note>
             </div>
           </div>
 
           <div className="flex flex-col gap-9 md:col-span-5">
-            <div>
-              <Heading>Stack</Heading>
-              <Tags items={p.stack} />
-            </div>
+            {p.stack.length > 0 && (
+              <div>
+                <Heading>Stack</Heading>
+                <Tags items={p.stack} />
+              </div>
+            )}
             <div>
               <Heading>My role</Heading>
               {p.myRole ? (
@@ -118,20 +121,27 @@ export default function CaseStudyModal({ open, onOpenChange, index, onNavigate }
               )}
             </div>
             <div>
-              <Heading>Screens &amp; outcomes</Heading>
-              <Placeholder>[Add real screenshots and verified outcomes. Left blank on purpose — nothing here is invented.]</Placeholder>
-            </div>
-            <div>
               <Heading>Links</Heading>
-              <Note className="text-xs">
-                {p.privateProduct ? (
-                  'Company product — no public link.'
-                ) : (
-                  <>
-                    <LinkLine label="Live link" url={p.liveUrl} /> · <LinkLine label="Repository" url={p.repoUrl} />
-                  </>
-                )}
-              </Note>
+              {p.links?.length ? (
+                <>
+                  <StoreLinks links={p.links} />
+                  {p.privateProduct && <Note className="mt-4 text-xs">Company product - no public repository.</Note>}
+                </>
+              ) : (
+                <Note className="text-xs">
+                  {!p.privateProduct ? (
+                    <>
+                      <LinkLine label="Live link" url={p.liveUrl} /> · <LinkLine label="Repository" url={p.repoUrl} />
+                    </>
+                  ) : p.liveUrl ? (
+                    <>
+                      <LinkLine label="Live site" url={p.liveUrl} /> · Company product - no public repository.
+                    </>
+                  ) : (
+                    'Company product - no public link.'
+                  )}
+                </Note>
+              )}
             </div>
           </div>
         </div>

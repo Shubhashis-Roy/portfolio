@@ -8,6 +8,7 @@ import Skills from '@/components/Skills';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import BackToTop from '@/components/BackToTop';
+import CaseStudyProvider from '@/components/CaseStudyProvider';
 
 export default function Home() {
   return (
@@ -15,14 +16,16 @@ export default function Home() {
       <Galaxy intensity={1} animate />
       <div className="relative z-1">
         <Nav />
-        <main>
-          <Hero />
-          <About />
-          <Experience />
-          <Projects />
-          <Skills />
-          <Contact />
-        </main>
+        <CaseStudyProvider>
+          <main>
+            <Hero />
+            <About />
+            <Experience />
+            <Skills />
+            <Projects />
+            <Contact />
+          </main>
+        </CaseStudyProvider>
         <Footer />
         <BackToTop />
       </div>
