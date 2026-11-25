@@ -8,6 +8,7 @@ import Skills from '@/components/Skills';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import BackToTop from '@/components/BackToTop';
+import WhatsAppButton from '@/components/WhatsAppButton';
 import CaseStudyProvider from '@/components/CaseStudyProvider';
 
 export default function Home() {
@@ -27,6 +28,7 @@ export default function Home() {
           </main>
         </CaseStudyProvider>
         <Footer />
+        <WhatsAppButton />
         <BackToTop />
       </div>
     </div>

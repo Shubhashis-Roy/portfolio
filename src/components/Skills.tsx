@@ -15,9 +15,10 @@ export default function Skills() {
             Technologies used across the projects above - grouped by where they sit in the product.
           </Lead>
         </div>
-        <div className="mt-16 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
-          {skills.map((s) => (
-            <Card key={s.group} className="reveal">
+        <div className="mt-16 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-6">
+          {skills.map((s, i) => (
+            // 5 groups: three across on the first row, two wider ones below.
+            <Card key={s.group} className={`reveal ${i < 3 ? 'lg:col-span-2' : 'lg:col-span-3'} ${i === skills.length - 1 && skills.length % 2 ? 'md:col-span-2' : ''}`}>
               <Mono tone="gold">{s.group}</Mono>
               <Tags items={s.items} className="mt-5" />
             </Card>

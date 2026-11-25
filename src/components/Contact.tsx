@@ -1,8 +1,9 @@
 import { ArrowRight } from 'lucide-react';
-import { profile } from '@/data/content';
+import { profile, whatsappUrl } from '@/data/content';
 import { Button } from '@/components/ui/button';
 import { Container, Eyebrow, Lead } from './primitives';
 import ResumeButton from './ResumeButton';
+import CopyButton from './CopyButton';
 
 const linkClass = 'font-mono text-xs tracking-[0.14em] text-zinc-400 uppercase no-underline transition-colors hover:text-gold';
 
@@ -36,19 +37,27 @@ export default function Contact() {
           <span className="text-gold [text-shadow:0_0_60px_rgb(var(--gold-rgb)/0.4)]">intelligent.</span>
         </h2>
         <Lead className="reveal mx-auto mt-7 max-w-[560px]">
-          Open to conversations about AI products, full-stack engineering and real-time systems.
+          Open to conversations about AI products, frontend, backend and full-stack engineering, and real-time systems.
         </Lead>
         <div className="reveal mt-11 flex flex-wrap justify-center gap-3.5">
-          <Button asChild>
-            <a href={`mailto:${profile.email || 'your.email@domain.com'}`}>
-              {profile.email || '[your.email@domain.com]'} <ArrowRight size={18} aria-hidden />
-            </a>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button asChild>
+              <a href={`mailto:${profile.email}`}>
+                {profile.email} <ArrowRight size={18} aria-hidden />
+              </a>
+            </Button>
+            <CopyButton value={profile.email} label="email" className="size-[52px]" />
+          </div>
           <ResumeButton icon={false} />
         </div>
-        <div className="reveal mt-10 flex flex-wrap justify-center gap-7">
+        <div className="reveal mt-10 flex flex-wrap items-center justify-center gap-7">
           <Social url={profile.linkedin} label="LinkedIn" />
           <Social url={profile.github} label="GitHub" />
+          <Social url={whatsappUrl} label="WhatsApp" />
+          <span className="inline-flex items-center gap-2.5">
+            <a href={`tel:${profile.phone.replace(/\s/g, '')}`} className={linkClass}>{profile.phone}</a>
+            <CopyButton value={profile.phone} label="phone number" className="size-8 [&_svg]:size-3.5" />
+          </span>
         </div>
       </Container>
     </section>

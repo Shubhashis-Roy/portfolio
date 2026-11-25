@@ -40,16 +40,31 @@ export default function Experience() {
             >
               {/* Company stays in view while its product scrolls past (nav is 76px tall). */}
               <div className="md:sticky md:top-[100px] md:col-span-4 md:self-start">
-                <p className="m-0 font-display text-[34px] leading-[1.1] font-semibold tracking-[-0.03em]">
-                  {x.current && <Dot />}
-                  {x.company}
-                </p>
-                <div className="mt-3 font-mono text-xs leading-[1.9] tracking-[0.14em] text-zinc-400 uppercase">
-                  {[[x.current ? 'Current' : null, x.role].filter(Boolean).join(' · '), x.dates, x.location]
-                    .filter(Boolean)
-                    .map((line) => (
-                      <p key={line} className="m-0">{line}</p>
-                    ))}
+                <div className="flex items-start gap-4">
+                  {x.logo && (
+                    <img
+                      src={x.logo}
+                      alt={`${x.company} logo`}
+                      width={56}
+                      height={56}
+                      loading="lazy"
+                      decoding="async"
+                      className="mt-1 size-14 shrink-0 rounded-lg border border-white/10 bg-white object-contain"
+                    />
+                  )}
+                  <div className="min-w-0">
+                    <p className="m-0 font-display text-[34px] leading-[1.1] font-semibold tracking-[-0.03em]">
+                      {x.current && <Dot />}
+                      {x.company}
+                    </p>
+                    <div className="mt-3 font-mono text-xs leading-[1.9] tracking-[0.14em] text-zinc-400 uppercase">
+                      {[[x.current ? 'Current' : null, x.role].filter(Boolean).join(' · '), x.dates, x.location]
+                        .filter(Boolean)
+                        .map((line) => (
+                          <p key={line} className="m-0">{line}</p>
+                        ))}
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="md:col-span-8">

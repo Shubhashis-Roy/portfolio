@@ -120,9 +120,6 @@ export function ProjectActions({ p }: { p: Project }) {
               <Button variant="outline" size="sm" disabled title="Add the live URL">View Project ↗</Button>
             )
           ))}
-        {p.privateProduct && (
-          <Note>Company product · {p.liveUrl || stores ? 'no public repository' : 'no public link'}</Note>
-        )}
       </div>
       {stores && (
         <div className="mt-7">

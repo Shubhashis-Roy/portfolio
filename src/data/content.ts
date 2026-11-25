@@ -12,14 +12,22 @@ export const profile = {
   role: 'Senior Software Engineer',
   experience: '3 years and 11 months',
   experienceShort: '3y 11m',
-  email: '', // e.g. 'you@domain.com' — shows "[your.email@domain.com]" until set
-  linkedin: '', // full URL
-  github: '', // full URL
-  resumeUrl: '', // e.g. '/resume.pdf' — put the PDF in /public
+  email: 'shubhashisroy360@gmail.com',
+  phone: '+91 96790 72397',
+  /** WhatsApp number in international format, digits only (used for wa.me links). */
+  whatsapp: '919679072397',
+  /** Pre-filled text when a visitor opens the WhatsApp chat. */
+  whatsappMessage: "Hi Shubhashis, I came across your portfolio and would like to connect.",
+  linkedin: 'https://www.linkedin.com/in/shubhashis-roy-735119200/',
+  github: 'https://github.com/Shubhashis-Roy',
+  resumeUrl: '/Shubhashis_Full_Stack_AI_Engineer.pdf', // PDF lives in /public; previewed at /resume
 };
 
 /** Ids of the case studies; shared by `Experience.projectId` and `Project.id`. */
 export type ProjectId = 'crushes' | 'player' | 'wellness' | 'healthcare' | 'pharma';
+
+/** Opens a WhatsApp chat with the pre-filled message. */
+export const whatsappUrl = `https://wa.me/${profile.whatsapp}?text=${encodeURIComponent(profile.whatsappMessage)}`;
 
 export type Experience = {
   company: string;
@@ -32,6 +40,8 @@ export type Experience = {
   /** Short highlights — keep each to roughly 60 characters so they stay two lines. */
   highlights?: string[];
   tags: string[];
+  /** Square company logo in /public, shown LinkedIn-style beside the company name. */
+  logo?: string;
   /** Products built in this role — each rendered in full inside the Experience section. */
   projectIds?: ProjectId[];
 };
@@ -39,6 +49,7 @@ export type Experience = {
 export const experience: Experience[] = [
   {
     company: 'Medici',
+    logo: '/logos/medici.png',
     current: true,
     role: 'Senior Software Engineer',
     dates: 'January 2026 - Present',
@@ -54,11 +65,12 @@ export const experience: Experience[] = [
       'Pharmetika pharmacy API: order submit and webhook status sync.',
       'UPS shipping: labels, rating, declared-value insurance, tracking.',
     ],
-    tags: ['Next.js', 'TypeScript', 'Bun', 'Hono', 'Node.js', 'Socket.IO', 'OpenAI', 'Anthropic Claude', 'AWS Bedrock', 'Drizzle', 'Supabase', 'Postgres', 'AWS', 'Docker'],
+    tags: ['Next.js', 'TypeScript', 'Bun', 'Hono', 'Node.js', 'Socket.IO', 'OpenAI', 'Anthropic Claude', 'AWS Bedrock', 'Drizzle', 'Supabase', 'UPS', 'Postgres', 'AWS', 'Docker'],
     projectIds: ['healthcare'],
   },
   {
     company: 'Appycodes',
+    logo: '/logos/appycodes.jpg',
     role: 'Full Stack Software Engineer',
     dates: 'December 2023 - December 2025',
     location: 'Siliguri, India',
@@ -69,11 +81,19 @@ export const experience: Experience[] = [
   },
   {
     company: 'Kenneth Tech',
-    role: '[Role title]',
-    dates: '[Dates]',
+    logo: '/logos/kenneth-tech.png',
+    role: 'Software Engineer',
+    dates: 'January 2023 - November 2023',
+    location: 'Chandigarh Area, India',
     summary:
-      'Built responsive interfaces and backend services for a secure, scalable pharmaceutical e-commerce platform covering product management and transactions.',
-    tags: ['E-commerce', 'Full-stack', 'Backend services'],
+      'Built a secure, scalable MERN-stack e-commerce platform where customers buy pharmaceutical products - working across the full product cycle from ideation to UI to implementation.',
+    highlights: [
+      'End-to-end product cycle: ideation, UI and implementation.',
+      'React + Redux storefront and customer-facing interface.',
+      'Express REST APIs backing catalogue, orders and operations.',
+      'Razorpay payment gateway integration for checkout.',
+    ],
+    tags: ['React', 'Redux', 'Node.js', 'Express.js', 'REST API', 'MongoDB', 'Razorpay'],
     projectIds: ['pharma'],
   },
 ];
@@ -106,6 +126,8 @@ export type Project = {
   flow: string[];
   /** Company products with no public link */
   privateProduct?: boolean;
+  /** Shown under "Links" in the case-study modal, e.g. why there's no public URL. */
+  linkNote?: string;
   /** Skip the concept mockup for this one (Experience section). */
   hideMockup?: boolean;
   liveUrl?: string;
@@ -146,13 +168,14 @@ export const projects: Project[] = [
     category: 'AI / Sports Analytics',
     org: 'Professional work · Appycodes',
     owner: 'Professional work · Appycodes',
-    desc: 'A decision-support system for a professional T20 cricket franchise. It scouts players, predicts form from performance and fitness indicators, and answers the questions a team actually asks: who to trade and for whom, which eleven gives the best odds against a specific opponent, and who to bowl when the match is on the line.',
+    desc: 'A decision-support system for Rajasthan Royals, a professional T20 cricket franchise. It scouts players, predicts form from performance and fitness indicators, and answers the questions a team actually asks: who to trade and for whom, which eleven gives the best odds against a specific opponent, and who to bowl when the match is on the line.',
     caps: ['Player scouting and valuation', 'Predictive performance modelling', 'Fitness and workload indicators', 'Best eleven for a given opponent', 'Trade analysis between franchises', 'Death-over bowling recommendations'],
     features: ['Player scouting and valuation', 'Predictive performance modelling', 'Fitness and workload indicators', 'Best eleven for a given opponent', 'Trade analysis between franchises', 'Death-over bowling recommendations', 'Play, bench, trade or release calls', 'Win-probability driven team decisions'],
     tags: ['Predictive analytics', 'AI recommendations'],
     stack: [],
     flow: ['Player & match data', 'Form and fitness models', 'Win-probability simulation', 'AI recommendations', 'Squad & match decisions'],
     privateProduct: true,
+    linkNote: 'Internal product for Rajasthan Royals - no public URL.',
     hideMockup: true,
     previewLabel: 'Concept dashboard · illustrative data',
     myRole:
@@ -225,15 +248,19 @@ export const projects: Project[] = [
     category: 'E-Commerce / Full-Stack Development',
     org: 'Professional work · Kenneth Tech',
     owner: 'Professional work · Kenneth Tech',
-    desc: 'A secure and scalable pharmaceutical e-commerce platform with responsive interfaces and backend services for product management, transactions, and seamless shopping experiences.',
-    caps: ['Responsive storefront interfaces', 'Product management services', 'Secure transactions', 'Scalable backend services'],
-    features: ['Responsive shopping interfaces', 'Product management', 'Secure transactions', 'Scalable backend services'],
-    tags: ['E-commerce', 'Full-stack', '[Add stack]'],
-    stack: ['E-commerce', 'Full-stack', '[Add stack]'],
-    flow: ['Product listing', 'Product details', 'Cart', 'Checkout'],
+    desc: 'A secure, scalable end-user e-commerce application built on the MERN stack, where customers browse and purchase pharmaceutical products - with a React and Redux storefront, REST APIs for business operations, and Razorpay payments.',
+    caps: ['React + Redux storefront', 'REST APIs for business operations', 'Razorpay payment integration', 'Secure, scalable MERN backend'],
+    features: ['End-user storefront in React', 'State management with Redux', 'REST APIs for business operations', 'Product catalogue and orders', 'Razorpay payment gateway', 'Secure, scalable MERN architecture'],
+    tags: ['React', 'Redux', 'Express.js', 'MongoDB', 'Razorpay'],
+    stack: ['React', 'Redux', 'Node.js', 'Express.js', 'REST API', 'MongoDB', 'Razorpay'],
+    flow: ['Product listing', 'Product details', 'Cart', 'Razorpay checkout', 'Order processing'],
     privateProduct: true,
     hideMockup: true,
     previewLabel: 'Concept storefront · placeholder products',
+    myRole:
+      'Took part in the full product development cycle, from ideation through UI design to implementation. I focused on ' +
+      'the user interface in React with Redux, developed the REST APIs that support the business operations, and ' +
+      'integrated the Razorpay payment gateway into checkout.',
   },
 ];
 
@@ -244,10 +271,11 @@ export const personalProjects = projects.filter((p) => p.kind === 'personal');
 export const projectById = (id: ProjectId) => projects.find((p) => p.id === id);
 
 export const skills: { group: string; items: string[] }[] = [
-  { group: 'Frontend', items: ['Next.js', 'React', 'TypeScript'] },
-  { group: 'AI & LLMs', items: ['OpenAI', 'GPT-4.1', 'Anthropic Claude', 'AWS Bedrock', 'Vercel AI SDK', 'RAG'] },
-  { group: 'Data', items: ['Supabase', 'Drizzle ORM', 'Qdrant'] },
-  { group: 'Real-time & Cloud', items: ['WebRTC', 'Socket.IO', 'AWS SES'] },
+  { group: 'Languages', items: ['JavaScript', 'TypeScript', 'Python', 'C/C++'] },
+  { group: 'Frontend', items: ['React.js', 'Next.js', 'React Native', 'Redux', 'Shopify', 'Tailwind CSS', 'Material-UI'] },
+  { group: 'Backend', items: ['Node.js', 'Express.js', 'FastAPI', 'GraphQL', 'MongoDB', 'MySQL', 'PostgreSQL', 'Supabase', 'REST APIs', 'Redis', 'Socket.IO', 'WebRTC'] },
+  { group: 'Generative AI', items: ['OpenAI', 'AWS Bedrock / Anthropic', 'AI Agents & Tool Calling', 'Vercel AI SDK', 'RAG', 'Prompt Engineering', 'Embeddings', 'Vector DB'] },
+  { group: 'Tools', items: ['AWS', 'Git', 'GitHub', 'Docker', 'VS Code', 'Linux'] },
 ];
 
 export const focusAreas = [
@@ -259,11 +287,11 @@ export const focusAreas = [
   {
     icon: 'realtime' as const,
     title: 'Real-time products',
-    text: 'Live matching, chat and video calling with WebRTC and Socket.IO - fast, responsive, event-driven.',
+    text: 'Real-time chat, voice calls and video calls with WebRTC and Socket.IO - fast, responsive, event-driven.',
   },
   {
     icon: 'platform' as const,
     title: 'Scalable web platforms',
-    text: 'Type-safe full-stack applications with Next.js, React, TypeScript and modern data layers.',
+    text: 'Type-safe full-stack applications with Next.js, React, TypeScript, Node.js, FastAPI and modern data layers.',
   },
 ];

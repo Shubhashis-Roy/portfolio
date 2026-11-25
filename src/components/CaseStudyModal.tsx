@@ -120,29 +120,26 @@ export default function CaseStudyModal({ open, onOpenChange, index, onNavigate }
                 <Placeholder>[Describe your responsibilities, scope and key decisions.]</Placeholder>
               )}
             </div>
-            <div>
-              <Heading>Links</Heading>
-              {p.links?.length ? (
-                <>
+            {(p.links?.length || p.liveUrl || !p.privateProduct || p.linkNote) && (
+              <div>
+                <Heading>Links</Heading>
+                {p.linkNote && !p.links?.length && !p.liveUrl ? (
+                  <Note className="text-xs">{p.linkNote}</Note>
+                ) : p.links?.length ? (
                   <StoreLinks links={p.links} />
-                  {p.privateProduct && <Note className="mt-4 text-xs">Company product - no public repository.</Note>}
-                </>
-              ) : (
-                <Note className="text-xs">
-                  {!p.privateProduct ? (
-                    <>
-                      <LinkLine label="Live link" url={p.liveUrl} /> · <LinkLine label="Repository" url={p.repoUrl} />
-                    </>
-                  ) : p.liveUrl ? (
-                    <>
-                      <LinkLine label="Live site" url={p.liveUrl} /> · Company product - no public repository.
-                    </>
-                  ) : (
-                    'Company product - no public link.'
-                  )}
-                </Note>
-              )}
-            </div>
+                ) : (
+                  <Note className="text-xs">
+                    {!p.privateProduct ? (
+                      <>
+                        <LinkLine label="Live link" url={p.liveUrl} /> · <LinkLine label="Repository" url={p.repoUrl} />
+                      </>
+                    ) : (
+                      <LinkLine label="Live site" url={p.liveUrl} />
+                    )}
+                  </Note>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
