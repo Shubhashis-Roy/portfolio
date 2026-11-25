@@ -3,15 +3,41 @@
  *
  * Anything still in [square brackets] is a placeholder from the original design.
  * Placeholders in `stack` arrays render as dashed "to fill" tags.
- * Leave `liveUrl` / `repoUrl` empty ('') to show the disabled "View Project" button.
+ * Personal projects link to `liveUrl` (live demo) and `repos` (source code) when set.
  */
+
+import { siteConfig } from '@/config/site';
+
+/** Total months of experience — counted from the career start, or fixed (see src/config/site.ts). */
+function experienceMonths(now = new Date()) {
+  const { autoIncrement, careerStart, fixed } = siteConfig.experience;
+  if (!autoIncrement) return fixed.years * 12 + fixed.months;
+  // +1 so both the start month and the current month count (Jan → Jan = 1 month).
+  return (now.getFullYear() - careerStart.year) * 12 + (now.getMonth() + 1 - careerStart.month) + 1;
+}
+
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
 export const profile = {
   name: 'Shubhashis Roy',
   initials: 'SR',
   role: 'Senior Software Engineer',
-  experience: '3 years and 11 months',
-  experienceShort: '3y 11m',
+  /** e.g. '3 years and 11 months' / '4 years' — recomputed on each render (page revalidates daily). */
+  get experience() {
+    const total = experienceMonths();
+    const years = Math.floor(total / 12);
+    const months = total % 12;
+    if (!months) return plural(years, 'year');
+    if (!years) return plural(months, 'month');
+    return `${plural(years, 'year')} and ${plural(months, 'month')}`;
+  },
+  /** e.g. '3y 11m' / '4y' */
+  get experienceShort() {
+    const total = experienceMonths();
+    const years = Math.floor(total / 12);
+    const months = total % 12;
+    return months ? `${years}y ${months}m` : `${years}y`;
+  },
   email: 'shubhashisroy360@gmail.com',
   phone: '+91 96790 72397',
   /** WhatsApp number in international format, digits only (used for wa.me links). */
@@ -24,7 +50,17 @@ export const profile = {
 };
 
 /** Ids of the case studies; shared by `Experience.projectId` and `Project.id`. */
-export type ProjectId = 'crushes' | 'player' | 'wellness' | 'healthcare' | 'pharma';
+export type ProjectId =
+  | 'crushes'
+  | 'streamhub'
+  | 'netflix-gpt'
+  | 'ecommerce-delivery'
+  | 'cinehub'
+  | 'image-analyzer'
+  | 'player'
+  | 'wellness'
+  | 'healthcare'
+  | 'pharma';
 
 /** Opens a WhatsApp chat with the pre-filled message. */
 export const whatsappUrl = `https://wa.me/${profile.whatsapp}?text=${encodeURIComponent(profile.whatsappMessage)}`;
@@ -131,7 +167,10 @@ export type Project = {
   /** Skip the concept mockup for this one (Experience section). */
   hideMockup?: boolean;
   liveUrl?: string;
-  repoUrl?: string;
+  /** Source-code links, e.g. one per repo for a split front-end / back-end. */
+  repos?: { label: string; url: string }[];
+  /** Cover image in /public — shown instead of the concept mockup. */
+  image?: string;
   /** Where the product ships - grouped per app, e.g. 'Consumer app' -> iOS / Android. */
   links?: { group: string; label: string; url: string }[];
   previewLabel: string;
@@ -140,24 +179,173 @@ export type Project = {
 };
 
 export const projects: Project[] = [
+  // ── Personal projects (same order as the old portfolio). Text comes from each repo's README. ──
   {
     id: 'crushes',
     kind: 'personal',
     name: 'Crushes',
-    title: 'Crushes - Social Matching Platform',
+    title: 'Crushes - Social Matching App',
     short: 'Crushes',
-    subtitle: 'Social Matching Platform',
+    subtitle: 'Social Matching App',
     category: 'Social / Real-Time Application',
-    owner: 'Featured project',
-    desc: 'A full-stack social matching platform featuring real-time matching, chat, and video calling. Built with WebRTC and Socket.IO, featuring an animated infinite-swipe interface, automated match notifications, and AWS SES email campaigns.',
-    caps: ['Real-time matching', 'Interactive infinite-swipe experience', 'Real-time chat', 'Video calling using WebRTC', 'Socket.IO integration', 'Automated match notifications', 'AWS SES email campaigns'],
-    features: ['Real-time matching', 'Interactive infinite-swipe experience', 'Real-time chat', 'Video calling using WebRTC', 'Socket.IO integration', 'Automated match notifications', 'AWS SES email campaigns'],
-    tags: ['WebRTC', 'Socket.IO', 'AWS SES', 'Real-time'],
-    stack: ['WebRTC', 'Socket.IO', 'AWS SES'],
-    flow: ['Infinite-swipe UI', 'Real-time matching', 'Socket.IO chat', 'WebRTC video', 'SES notifications'],
-    liveUrl: '',
-    repoUrl: '',
-    previewLabel: 'Concept mockups · placeholder imagery',
+    owner: 'Personal project · May - June 2025',
+    desc: 'A highly scalable, fully responsive full-stack dating web application with real-time chat and video calls over Socket.IO and WebRTC, an animated infinite-swipe card interface and JWT-based authentication. Daily match notifications go out by email at 08:00 AM via cron jobs, and both front-end and back-end are deployed on AWS.',
+    caps: ['Real-time chat with Socket.IO', 'Video calls with WebRTC', 'Animated infinite-swipe cards', 'JWT-based authentication', 'Daily match emails via cron + AWS SES', 'Deployed on AWS'],
+    features: [
+      'Real-time chat with Socket.IO',
+      'Video calls with WebRTC',
+      'Animated infinite-swipe card interface',
+      'JWT-based authentication (signup, login, logout)',
+      'Send interested / ignore requests; accept or reject received ones',
+      'Connections list and a feed of other users',
+      'Profile editing with up to three photos',
+      'Daily match notification emails at 08:00 AM (cron + AWS SES)',
+      'Front-end and back-end deployed on AWS',
+    ],
+    tags: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Socket.IO', 'WebRTC', 'AWS SES'],
+    stack: ['React.js', 'Vite', 'React-Redux', 'Tailwind CSS', 'DaisyUI', 'Node.js', 'Express.js', 'MongoDB', 'Socket.IO', 'WebRTC', 'JWT', 'node-cron', 'AWS SES'],
+    flow: ['Sign up / log in (JWT)', 'Swipe the feed', 'Send interested request', 'Request accepted', 'Chat & video call', 'Daily match email'],
+    liveUrl: 'https://crushes.in/',
+    repos: [
+      { label: 'Front-end', url: 'https://github.com/Shubhashis-Roy/crushes-web' },
+      { label: 'Back-end', url: 'https://github.com/Shubhashis-Roy/crushes-backend' },
+    ],
+    image: '/projects/crushes.jpg',
+    previewLabel: 'Crushes',
+  },
+  {
+    id: 'streamhub',
+    kind: 'personal',
+    name: 'StreamHub',
+    title: 'StreamHub - Video Streaming Platform',
+    short: 'StreamHub',
+    subtitle: 'Video Streaming Platform',
+    category: 'Video Streaming / Front-End',
+    owner: 'Personal project · September - October 2023',
+    desc: 'A highly scalable video streaming platform with live chat and n-level nested comments. Search is debounced to cut network calls and cached in the Redux store, the home page loads videos with infinite scroll, and live chat runs on API polling. All data comes from the YouTube live streaming API, with Google Query Suggestion API for search.',
+    caps: ['Live chat via API polling', 'N-level nested comments', 'Debounced search with Redux caching', 'Infinite scroll on the home page', 'Google sign-in'],
+    features: [
+      'Live chat using API polling',
+      'N-level nested comments',
+      'Debounced search to reduce network calls',
+      'Search results cached in the Redux store',
+      'Infinite scroll on the home page',
+      'Like, subscribe, watch later and filter videos',
+      'Sign up / log in with Google Authentication',
+      'YouTube live streaming API and Google Query Suggestion API',
+    ],
+    tags: ['React.js', 'React-Redux', 'Tailwind CSS', 'YouTube API', 'Firebase'],
+    stack: ['React.js', 'React-Redux', 'Redux Toolkit', 'Tailwind CSS', 'Firebase', 'YouTube live streaming API', 'Google Query Suggestion API'],
+    flow: ['Google sign-in', 'Infinite-scroll feed', 'Debounced search', 'Watch video', 'Live chat & nested comments'],
+    repos: [{ label: 'Source code', url: 'https://github.com/Shubhashis-Roy/StreamHub' }],
+    image: '/projects/streamhub.jpg',
+    previewLabel: 'StreamHub',
+  },
+  {
+    id: 'netflix-gpt',
+    kind: 'personal',
+    name: 'Netflix-GPT',
+    title: 'Netflix-GPT',
+    short: 'Netflix-GPT',
+    subtitle: 'AI Movie Recommendations',
+    category: 'Generative AI / Streaming',
+    owner: 'Personal project · August - September 2023',
+    desc: 'A highly optimized, responsive movie streaming app where users search for a type of movie - funny, action, horror - and get suggestions powered by the OpenAI API and TMDB. Lazy loading keeps the app loading within 250 ms, it supports English, Hindi and Spanish, and users can sign in and keep a favourites list.',
+    caps: ['GPT-powered movie suggestions', 'Loads within 250 ms (lazy loading)', 'English, Hindi and Spanish', 'Sign up / log in', 'Favourites list'],
+    features: [
+      'Movie suggestions from a search like "funny movies" (OpenAI API)',
+      'Movie data from the TMDB API',
+      'Loads within 250 ms using lazy loading',
+      'Multi-language support: English, Hindi and Spanish',
+      'Content split into categories after login',
+      'Sign up / log in with Firebase',
+      'Add movies to a favourites list',
+    ],
+    tags: ['React.js', 'OpenAI API', 'TMDB API', 'Firebase', 'React-Redux'],
+    stack: ['React.js', 'React-Redux', 'Redux Toolkit', 'Tailwind CSS', 'Firebase', 'OpenAI API', 'TMDB API'],
+    flow: ['Sign up / log in', 'Search a movie type', 'OpenAI suggestions', 'TMDB movie details', 'Add to favourites'],
+    repos: [{ label: 'Source code', url: 'https://github.com/Shubhashis-Roy/NetflixGPT' }],
+    image: '/projects/netflix-gpt.jpg',
+    previewLabel: 'Netflix-GPT',
+  },
+  {
+    id: 'ecommerce-delivery',
+    kind: 'personal',
+    name: 'Ecommerce Delivery Webapp',
+    title: 'Ecommerce Delivery Webapp',
+    short: 'Ecommerce Delivery',
+    subtitle: 'Online Delivery Platform',
+    category: 'E-Commerce / Full-Stack (MERN)',
+    owner: 'Personal project · May - July 2023',
+    desc: 'An online delivery web app where users search products, pay and place an order for delivery. Admins get a dashboard to create categories and products with images, names, descriptions and prices; users browse everything on the home page, filter by price and category, add to cart and check out through the Braintree payment gateway.',
+    caps: ['Admin and user portals', 'Product search and filters', 'Cart and checkout', 'Braintree payment gateway', 'REST API on Express + MongoDB'],
+    features: [
+      'Separate admin and user portals',
+      'Admin creates categories and products - image, name, description, price',
+      'Admin can update or delete products',
+      'Users search products and filter by price and category',
+      'Cart for favourite products',
+      'Checkout with the Braintree payment gateway',
+      'Order placed for delivery after payment',
+    ],
+    tags: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'REST API', 'Braintree'],
+    stack: ['React.js', 'Context API', 'Ant Design', 'Node.js', 'Express.js', 'MongoDB', 'Mongoose', 'REST API', 'JWT', 'Braintree'],
+    flow: ['Admin creates products', 'User searches & filters', 'Add to cart', 'Braintree payment', 'Order for delivery'],
+    repos: [{ label: 'Source code', url: 'https://github.com/Shubhashis-Roy/Ecommerce-Delivery-WebApp' }],
+    image: '/projects/ecommerce-delivery.jpg',
+    previewLabel: 'Ecommerce Delivery',
+  },
+  {
+    id: 'cinehub',
+    kind: 'personal',
+    name: 'CineHub',
+    title: 'CineHub',
+    short: 'CineHub',
+    subtitle: 'Movie WebApp',
+    category: 'Full-Stack / Streaming',
+    owner: 'Personal project · October - November 2022',
+    desc: 'A full-stack movie web app - every story, one destination. Users create an account or log in with Gmail, search for movies, dramas and web series, browse content split into categories, and add titles to their favourites list.',
+    caps: ['Sign up / log in with Gmail', 'Search movies, dramas and web series', 'Content split by category', 'Favourites list'],
+    features: [
+      'Create an account or log in with Gmail (Firebase)',
+      'Search movies, dramas and web series',
+      'Content divided into categories after login',
+      'Add titles to a favourites list',
+      'Express + MongoDB back-end',
+    ],
+    tags: ['React', 'Node.js', 'Express.js', 'MongoDB', 'Firebase'],
+    stack: ['React', 'Axios', 'Firebase', 'Node.js', 'Express.js', 'MongoDB', 'Mongoose', 'TMDB API'],
+    flow: ['Sign up / log in', 'Browse categories', 'Search titles', 'Add to favourites'],
+    repos: [{ label: 'Source code', url: 'https://github.com/Shubhashis-Roy/Movie-WebApp' }],
+    image: '/projects/cinehub.jpg',
+    previewLabel: 'CineHub',
+  },
+  {
+    id: 'image-analyzer',
+    kind: 'personal',
+    name: 'Image Analyzer',
+    title: 'Image Analyzer',
+    short: 'Image Analyzer',
+    subtitle: 'In-Browser Image Recognition',
+    category: 'Machine Learning / Front-End',
+    owner: 'Personal project · July 2023',
+    desc: 'Upload an image or paste its URL and the app detects what is in it and shows the analysed data, using a TensorFlow MobileNet model. Uploaded images are saved locally so they can be picked and analysed again, and on mobile you can take a photo with the camera. Fully responsive.',
+    caps: ['Upload an image or paste a URL', 'Automatic detection with TensorFlow', 'History of analysed images', 'Camera upload on mobile', 'Fully responsive'],
+    features: [
+      'Upload an image or paste an image URL',
+      'Automatic detection with TensorFlow.js MobileNet',
+      'Analysed data shown for each image',
+      'Uploaded images saved locally and re-analysable',
+      'Take a photo with the camera on mobile',
+      'Fully responsive',
+    ],
+    tags: ['React.js', 'TensorFlow.js', 'MobileNet', 'Express.js'],
+    stack: ['React.js', 'TensorFlow.js', 'MobileNet', 'Express.js'],
+    flow: ['Upload image or URL', 'MobileNet detection', 'Show analysed data', 'Saved for re-analysis'],
+    liveUrl: 'https://imageid.netlify.app/',
+    repos: [{ label: 'Source code', url: 'https://github.com/Shubhashis-Roy/Image-Identification' }],
+    image: '/projects/image-analyzer.jpg',
+    previewLabel: 'Image Analyzer',
   },
   {
     id: 'player',

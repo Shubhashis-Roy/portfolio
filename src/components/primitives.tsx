@@ -15,7 +15,7 @@ type SectionProps = React.ComponentProps<'section'> & {
 
 /** Page section that the galaxy background reacts to. */
 export function Section({ galaxy, gx, className, ...props }: SectionProps) {
-  return <section data-galaxy={galaxy} data-gx={gx} className={cn('relative py-[150px] max-md:py-24', className)} {...props} />;
+  return <section data-galaxy={galaxy} data-gx={gx} className={cn('relative py-[100px] max-md:py-16', className)} {...props} />;
 }
 
 /** Uppercase monospace label. */

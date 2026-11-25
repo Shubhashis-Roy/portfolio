@@ -11,6 +11,9 @@ import BackToTop from '@/components/BackToTop';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import CaseStudyProvider from '@/components/CaseStudyProvider';
 
+// Rebuild the page at most once a day so the experience counter stays current.
+export const revalidate = 86400;
+
 export default function Home() {
   return (
     <div data-galaxy-root className="relative min-h-full bg-ink text-white">

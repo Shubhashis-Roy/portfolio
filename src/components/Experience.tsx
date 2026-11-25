@@ -1,4 +1,4 @@
-import { experience, projectById, type ProjectId } from '@/data/content';
+import { experience, profile, projectById, type ProjectId } from '@/data/content';
 import { cn } from '@/lib/utils';
 import { Caps, Container, Dot, Eyebrow, Heading2, Lead, Section, Tags } from './primitives';
 import { Description, Preview, ProjectActions, ProjectMeta, ProjectTitle } from './project-parts';
@@ -30,7 +30,7 @@ export default function Experience() {
         <Eyebrow className="reveal">02 - Experience</Eyebrow>
         <Heading2 className="mb-6 max-w-[820px]">Products built inside real teams.</Heading2>
         <Lead className="reveal mb-16 max-w-[640px]">
-          Three roles, three products - each one shown with the work it involved.
+          {profile.experience} of experience across three roles and various products - each one shown with the work it involved.
         </Lead>
         <div className="border-t border-white/10">
           {experience.map((x) => (

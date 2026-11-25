@@ -131,7 +131,17 @@ export default function CaseStudyModal({ open, onOpenChange, index, onNavigate }
                   <Note className="text-xs">
                     {!p.privateProduct ? (
                       <>
-                        <LinkLine label="Live link" url={p.liveUrl} /> · <LinkLine label="Repository" url={p.repoUrl} />
+                        {p.liveUrl && (
+                          <span className="block">
+                            <LinkLine label="Live demo" url={p.liveUrl} />
+                          </span>
+                        )}
+                        {p.repos?.map((r) => (
+                          <span key={r.url} className="block">
+                            <LinkLine label={r.label} url={r.url} />
+                          </span>
+                        ))}
+                        {!p.liveUrl && !p.repos?.length && <LinkLine label="Live link" />}
                       </>
                     ) : (
                       <LinkLine label="Live site" url={p.liveUrl} />

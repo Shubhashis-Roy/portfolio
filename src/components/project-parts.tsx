@@ -17,7 +17,8 @@ import WellnessMockup from './mockups/WellnessMockup';
 import HealthcareMockup from './mockups/HealthcareMockup';
 import PharmaMockup from './mockups/PharmaMockup';
 
-const MOCKUPS: Record<Project['id'], () => React.JSX.Element> = {
+/** Concept mockups for projects without a cover `image`. */
+const MOCKUPS: Partial<Record<Project['id'], () => React.JSX.Element>> = {
   crushes: CrushesMockup,
   player: PlayerIntelMockup,
   wellness: WellnessMockup,
@@ -25,7 +26,7 @@ const MOCKUPS: Record<Project['id'], () => React.JSX.Element> = {
   pharma: PharmaMockup,
 };
 
-/** Framed concept mockup with its "not a real screenshot" label. */
+/** Framed cover image (or concept mockup) with its label. */
 export function Preview({ p, className }: { p: Project; className: string }) {
   const Mockup = MOCKUPS[p.id];
   return (
@@ -33,7 +34,16 @@ export function Preview({ p, className }: { p: Project; className: string }) {
       <span className="absolute top-[18px] left-5 z-3 rounded-full border border-white/10 bg-ink/70 px-2.5 py-[7px] font-mono text-[10.5px] tracking-[.14em] text-zinc-400 uppercase">
         {p.previewLabel}
       </span>
-      <Mockup />
+      {p.image ? (
+        <img
+          src={p.image}
+          alt={`${p.title} cover`}
+          loading="lazy"
+          className="absolute inset-0 size-full object-cover transition-transform duration-700 ease-out-expo group-hover/project:scale-[1.03]"
+        />
+      ) : (
+        Mockup && <Mockup />
+      )}
     </div>
   );
 }
@@ -102,24 +112,31 @@ export function StoreLinks({ links, className }: { links: NonNullable<Project['l
   );
 }
 
-/** "View Details" plus the live-link button (or the reason there isn't one). */
+/** "View Details" plus the live-demo / source-code buttons (or the reason there aren't any). */
 export function ProjectActions({ p }: { p: Project }) {
   // With per-store links a single "View Project" button would hide three of them.
   const stores = p.links?.length ? p.links : null;
+  const repos = p.repos ?? [];
+  const hasPublicLink = !!p.liveUrl || repos.length > 0;
   return (
     <>
       <div className="mt-7 flex flex-wrap items-center gap-3">
         <CaseStudyButton id={p.id} />
-        {!stores &&
-          (p.liveUrl ? (
-            <Button asChild variant="outline" size="sm">
-              <a href={p.liveUrl} target="_blank" rel="noreferrer">View Project ↗</a>
-            </Button>
-          ) : (
-            !p.privateProduct && (
-              <Button variant="outline" size="sm" disabled title="Add the live URL">View Project ↗</Button>
-            )
-          ))}
+        {!stores && p.liveUrl && (
+          <Button asChild variant="outline" size="sm">
+            <a href={p.liveUrl} target="_blank" rel="noreferrer">
+              {p.kind === 'personal' ? 'Live Demo' : 'View Project'} ↗
+            </a>
+          </Button>
+        )}
+        {repos.map((r) => (
+          <Button key={r.url} asChild variant="outline" size="sm">
+            <a href={r.url} target="_blank" rel="noreferrer">{r.label} ↗</a>
+          </Button>
+        ))}
+        {!stores && !hasPublicLink && !p.privateProduct && (
+          <Button variant="outline" size="sm" disabled title="Add the live URL">View Project ↗</Button>
+        )}
       </div>
       {stores && (
         <div className="mt-7">
@@ -127,7 +144,7 @@ export function ProjectActions({ p }: { p: Project }) {
           <StoreLinks links={stores} className="mt-3" />
         </div>
       )}
-      {!p.privateProduct && !p.liveUrl && !stores && <Note className="mt-3">Live link: [add URL]</Note>}
+      {!p.privateProduct && !hasPublicLink && !stores && <Note className="mt-3">Live link: [add URL]</Note>}
     </>
   );
 }
