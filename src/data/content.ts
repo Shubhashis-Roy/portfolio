@@ -23,7 +23,7 @@ export const profile = {
   initials: 'SR',
   role: 'Senior Software Engineer',
   /** Titles the hero headline rotates through; the first should match `role` (used for SEO / screen readers). */
-  roles: ['Senior Software Engineer', 'AI Full Stack Engineer', 'Generative AI Engineer', 'Full Stack Developer', 'Real-Time Systems Engineer'],
+  roles: ['Senior Software Engineer', 'AI Full Stack Engineer', 'Generative AI Engineer', 'Full Stack Developer'],
   /** e.g. '3 years and 11 months' / '4 years' — recomputed on each render (page revalidates daily). */
   get experience() {
     const total = experienceMonths();
