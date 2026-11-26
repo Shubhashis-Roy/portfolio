@@ -22,6 +22,8 @@ export const profile = {
   name: 'Shubhashis Roy',
   initials: 'SR',
   role: 'Senior Software Engineer',
+  /** Titles the hero headline rotates through; the first should match `role` (used for SEO / screen readers). */
+  roles: ['Senior Software Engineer', 'AI Full Stack Engineer', 'Generative AI Engineer', 'Full Stack Developer', 'Real-Time Systems Engineer'],
   /** e.g. '3 years and 11 months' / '4 years' — recomputed on each render (page revalidates daily). */
   get experience() {
     const total = experienceMonths();
@@ -87,7 +89,7 @@ export const experience: Experience[] = [
     company: 'Medici',
     logo: '/logos/medici.png',
     current: true,
-    role: 'Senior Software Engineer',
+    role: 'Full Stack Software Engineer',
     dates: 'January 2026 - Present',
     location: 'Austin, USA · Remote',
     summary:
@@ -464,6 +466,18 @@ export const personalProjects = projects.filter((p) => p.kind === 'personal');
 /** Products built in a role — shown inside that role's Experience entry. */
 export const projectById = (id: ProjectId) => projects.find((p) => p.id === id);
 
+/**
+ * Case-study prev/next order = the order they appear on the page. Work products (by job) and personal
+ * projects are separate sequences, so navigation stops at the end of the Experience section.
+ */
+export const caseStudyOrder: Record<Project['kind'], ProjectId[]> = {
+  professional: experience.flatMap((x) => x.projectIds ?? []),
+  personal: personalProjects.map((p) => p.id),
+};
+
+/** Company a work product was built at, e.g. 'Appycodes' (undefined for personal projects). */
+export const projectCompany = (id: ProjectId) => experience.find((x) => x.projectIds?.includes(id))?.company;
+
 export const skills: { group: string; items: string[] }[] = [
   { group: 'Languages', items: ['JavaScript', 'TypeScript', 'Python', 'C/C++'] },
   { group: 'Frontend', items: ['React.js', 'Next.js', 'React Native', 'Redux', 'Shopify', 'Tailwind CSS', 'Material-UI'] },
@@ -472,20 +486,30 @@ export const skills: { group: string; items: string[] }[] = [
   { group: 'Tools', items: ['AWS', 'Git', 'GitHub', 'Docker', 'VS Code', 'Linux'] },
 ];
 
-export const focusAreas = [
+/** "Why hire me" — shown right below the hero. Keep each point short and concrete. */
+export const whyHireMe: { title: string; text: string }[] = [
   {
-    icon: 'ai' as const,
-    title: 'Intelligent systems',
-    text: 'LLM-powered features, retrieval-augmented generation and AI decision support built into real products.',
+    title: 'Production AI, not demos',
+    text: 'LLM agents, tool calling and RAG pipelines with OpenAI, Claude and AWS Bedrock - running inside a live healthcare platform.',
   },
   {
-    icon: 'realtime' as const,
-    title: 'Real-time products',
-    text: 'Real-time chat, voice calls and video calls with WebRTC and Socket.IO - fast, responsive, event-driven.',
+    title: 'Real-time expertise',
+    text: 'Chat, voice and video calls built with Socket.IO and WebRTC - fast, event-driven and reliable under load.',
   },
   {
-    icon: 'platform' as const,
-    title: 'Scalable web platforms',
-    text: 'Type-safe full-stack applications with Next.js, React, TypeScript, Node.js, FastAPI and modern data layers.',
+    title: 'Remote-ready & product-minded',
+    text: 'Working remotely with a US team - clear async communication and a focus on what users actually need.',
+  },
+  {
+    title: 'End-to-end ownership',
+    text: 'From database schema and APIs to a polished UI - I ship complete features in Next.js, React, Node.js and TypeScript.',
+  },
+  {
+    title: 'Integrations that handle real stakes',
+    text: 'Payments, pharmacy and shipping APIs with webhooks, retries and reconciliation - where mistakes cost money.',
+  },
+  {
+    title: 'Built for reliability',
+    text: 'Durable job queues with claim, retry and dead-letter, type-safe code end to end, and Dockerised AWS deploys.',
   },
 ];

@@ -2,9 +2,13 @@ import { profile } from '@/data/content';
 import { Button } from '@/components/ui/button';
 import { Container } from './primitives';
 import ThemeToggle from './ThemeToggle';
+import ProjectsMenu from './ProjectsMenu';
+
+const linkClass =
+  'rounded-full px-3.5 py-2.5 text-sm text-zinc-400 no-underline transition-colors duration-300 hover:bg-white/5 hover:text-white';
 
 const links = [
-  ['#about', 'About'],
+  ['#why-hire-me', 'Why me'],
   ['#experience', 'Experience'],
   ['#skills', 'Skills'],
   ['#projects', 'Projects'],
@@ -22,15 +26,15 @@ export default function Nav() {
           <span className="text-[15px] font-semibold whitespace-nowrap">{profile.name}</span>
         </a>
         <nav className="flex gap-1.5 max-md:hidden" aria-label="Primary">
-          {links.map(([href, label]) => (
-            <a
-              key={href}
-              href={href}
-              className="rounded-full px-3.5 py-2.5 text-sm text-zinc-400 no-underline transition-colors duration-300 hover:bg-white/5 hover:text-white"
-            >
-              {label}
-            </a>
-          ))}
+          {links.map(([href, label]) =>
+            href === '#projects' ? (
+              <ProjectsMenu key={href} className={linkClass} />
+            ) : (
+              <a key={href} href={href} className={linkClass}>
+                {label}
+              </a>
+            ),
+          )}
         </nav>
         <div className="flex items-center gap-3">
           <ThemeToggle />

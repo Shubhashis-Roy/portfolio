@@ -136,6 +136,8 @@
   }
   html {
     @apply scroll-smooth font-sans;
+    /* Anchor links (#top, #experience…) stop below the 76px sticky header instead of under it. */
+    scroll-padding-top: 76px;
     /* The design was laid out with the browser's default line-height. */
     line-height: normal;
   }

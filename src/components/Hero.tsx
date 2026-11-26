@@ -1,8 +1,10 @@
 import { ArrowRight } from 'lucide-react';
 import { profile } from '@/data/content';
 import { Button } from '@/components/ui/button';
-import { Container, Dot, Mono } from './primitives';
+import { Container, Mono } from './primitives';
 import ResumeButton from './ResumeButton';
+import Greeting from './Greeting';
+import RoleRotator from './RoleRotator';
 
 /**
  * Role line: a per-theme gradient that contrasts with the black-hole disk behind it,
@@ -36,19 +38,14 @@ export default function Hero() {
       <Container>
         <div className="max-w-[820px]">
           <div className="reveal mb-[clamp(8px,1.6vh,16px)] flex items-center gap-3.5">
-            <Dot />
-            <span className={`font-display text-[clamp(26px,min(2.8vw,5vh),40px)] leading-tight font-semibold tracking-[-0.02em] text-gold ${shadow}`}>
-              Hi there 👋
-            </span>
+            <Greeting className={`font-display text-[clamp(26px,min(2.8vw,5vh),40px)] leading-tight font-semibold tracking-[-0.02em] text-gold ${shadow}`} />
           </div>
           <p className={`reveal mt-0 mb-[clamp(12px,2vh,24px)] text-[clamp(17px,2.4vh,20px)] leading-[1.5] text-zinc-300 max-md:text-lg ${shadow}`}>
             Thank you for visiting my portfolio.
           </p>
           <h1 className={`reveal-text m-0 font-display text-[clamp(34px,min(4.8vw,8.5vh),72px)] leading-[1.02] font-semibold tracking-[-0.035em] ${shadow}`}>
             I’m {profile.name},{' '}
-            <em className={accent}>
-              {profile.role}.
-            </em>
+            <RoleRotator className={accent} />
           </h1>
           <p className={`reveal mt-[clamp(14px,3vh,32px)] mb-0 max-w-[640px] text-[clamp(16px,2.4vh,20px)] leading-[1.65] text-zinc-200 max-md:text-lg ${bodyShadow}`}>
             Nearly 4 years of experience in designing and building scalable web and mobile applications, specializing in AI engineering,

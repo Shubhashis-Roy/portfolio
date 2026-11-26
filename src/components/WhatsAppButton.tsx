@@ -1,4 +1,5 @@
 import { whatsappUrl } from '@/data/content';
+import { cn } from '@/lib/utils';
 
 /** WhatsApp brand mark (simple-icons path). */
 export const WhatsAppIcon = ({ size = 24 }: { size?: number }) => (
@@ -7,8 +8,11 @@ export const WhatsAppIcon = ({ size = 24 }: { size?: number }) => (
   </svg>
 );
 
-/** Floating WhatsApp button — opens a chat with a pre-filled message. Sits above the back-to-top button. */
-export default function WhatsAppButton() {
+/**
+ * Floating WhatsApp button — opens a chat with a pre-filled message.
+ * Sits in the bottom-right corner; `raised` lifts it above the back-to-top button while that is visible.
+ */
+export default function WhatsAppButton({ raised = false }: { raised?: boolean }) {
   return (
     <a
       href={whatsappUrl}
@@ -16,7 +20,10 @@ export default function WhatsAppButton() {
       rel="noreferrer"
       aria-label="Chat on WhatsApp"
       title="Chat on WhatsApp"
-      className="fixed right-6 bottom-24 z-40 flex size-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_10px_40px_rgb(0_0_0/0.5),0_0_24px_rgb(37_211_102/0.35)] transition-transform duration-300 hover:scale-110 max-md:right-4 max-md:bottom-20"
+      className={cn(
+        'fixed right-6 z-40 flex size-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_10px_40px_rgb(0_0_0/0.5),0_0_24px_rgb(37_211_102/0.35)] transition-[bottom,scale] duration-300 ease-out-expo hover:scale-110 max-md:right-4',
+        raised ? 'bottom-24 max-md:bottom-20' : 'bottom-6 max-md:bottom-4',
+      )}
     >
       <WhatsAppIcon size={26} />
     </a>

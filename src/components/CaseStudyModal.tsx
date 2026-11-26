@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { ArrowLeft, ArrowRight, X } from 'lucide-react';
-import { projects } from '@/data/content';
+import { caseStudyOrder, projectCompany, projects, type ProjectId } from '@/data/content';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
@@ -39,18 +39,34 @@ function LinkLine({ label, url }: { label: string; url?: string }) {
   );
 }
 
+/** Prev/next button text, prefixed with the company for work products: "Appycodes · Player Intelligence". */
+function NavLabel({ id }: { id: ProjectId }) {
+  const company = projectCompany(id);
+  const short = projects.find((x) => x.id === id)?.short;
+  return company ? (
+    <>
+      <span className="text-zinc-400">{company} ·</span> {short}
+    </>
+  ) : (
+    <>{short}</>
+  );
+}
+
 export default function CaseStudyModal({ open, onOpenChange, index, onNavigate }: Props) {
-  const n = projects.length;
   const p = projects[index];
-  const prev = (index - 1 + n) % n;
-  const next = (index + 1) % n;
+  // Follow the on-page order within the same section (work vs personal); stop at the ends.
+  const order = caseStudyOrder[p.kind];
+  const pos = order.indexOf(p.id);
+  const indexOf = (id?: ProjectId) => (id ? projects.findIndex((x) => x.id === id) : -1);
+  const prev = indexOf(order[pos - 1]);
+  const next = indexOf(order[pos + 1]);
 
   // ← / → switch between case studies while the dialog is open
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') onNavigate(next);
-      if (e.key === 'ArrowLeft') onNavigate(prev);
+      if (e.key === 'ArrowRight' && next >= 0) onNavigate(next);
+      if (e.key === 'ArrowLeft' && prev >= 0) onNavigate(prev);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -155,12 +171,18 @@ export default function CaseStudyModal({ open, onOpenChange, index, onNavigate }
 
         {/* Prev / next */}
         <div className="flex flex-wrap justify-between gap-3 border-t border-white/8 px-16 pt-6 pb-10 max-md:px-6">
-          <Button variant="outline" size="sm" onClick={() => onNavigate(prev)}>
-            <ArrowLeft size={16} aria-hidden /> {projects[prev].short}
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => onNavigate(next)}>
-            {projects[next].short} <ArrowRight size={16} aria-hidden />
-          </Button>
+          {prev >= 0 ? (
+            <Button variant="outline" size="sm" onClick={() => onNavigate(prev)}>
+              <ArrowLeft size={16} aria-hidden /> <NavLabel id={projects[prev].id} />
+            </Button>
+          ) : (
+            <span />
+          )}
+          {next >= 0 && (
+            <Button variant="outline" size="sm" className="ml-auto" onClick={() => onNavigate(next)}>
+              <NavLabel id={projects[next].id} /> <ArrowRight size={16} aria-hidden />
+            </Button>
+          )}
         </div>
       </DialogContent>
     </Dialog>
