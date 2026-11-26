@@ -183,6 +183,7 @@ export const projects: Project[] = [
   {
     id: 'crushes',
     kind: 'personal',
+    myRole: 'Sole developer - I planned, designed and built every feature end to end on my own.',
     name: 'Crushes',
     title: 'Crushes - Social Matching App',
     short: 'Crushes',
@@ -216,13 +217,14 @@ export const projects: Project[] = [
   {
     id: 'streamhub',
     kind: 'personal',
+    myRole: 'Sole developer - I planned, designed and built every feature end to end on my own.',
     name: 'StreamHub',
     title: 'StreamHub - Video Streaming Platform',
     short: 'StreamHub',
     subtitle: 'Video Streaming Platform',
     category: 'Video Streaming / Front-End',
     owner: 'Personal project · September - October 2023',
-    desc: 'A highly scalable video streaming platform with live chat and n-level nested comments. Search is debounced to cut network calls and cached in the Redux store, the home page loads videos with infinite scroll, and live chat runs on API polling. All data comes from the YouTube live streaming API, with Google Query Suggestion API for search.',
+    desc: 'A video streaming platform built to scale, with live chat and n-level nested comments. Search is debounced to cut network calls and cached in the Redux store, the home page loads videos with infinite scroll, and live chat runs on API polling. All data comes from the YouTube live streaming API, with Google Query Suggestion API for search.',
     caps: ['Live chat via API polling', 'N-level nested comments', 'Debounced search with Redux caching', 'Infinite scroll on the home page', 'Google sign-in'],
     features: [
       'Live chat using API polling',
@@ -244,13 +246,14 @@ export const projects: Project[] = [
   {
     id: 'netflix-gpt',
     kind: 'personal',
+    myRole: 'Sole developer - I planned, designed and built every feature end to end on my own.',
     name: 'Netflix-GPT',
     title: 'Netflix-GPT',
     short: 'Netflix-GPT',
     subtitle: 'AI Movie Recommendations',
     category: 'Generative AI / Streaming',
     owner: 'Personal project · August - September 2023',
-    desc: 'A highly optimized, responsive movie streaming app where users search for a type of movie - funny, action, horror - and get suggestions powered by the OpenAI API and TMDB. Lazy loading keeps the app loading within 250 ms, it supports English, Hindi and Spanish, and users can sign in and keep a favourites list.',
+    desc: 'An AI-powered movie app - describe the kind of film you want (funny, action, horror) and get GPT suggestions backed by TMDB data. Lazy loading keeps it loading within 250 ms, it supports English, Hindi and Spanish, and users can sign in and keep a favourites list.',
     caps: ['GPT-powered movie suggestions', 'Loads within 250 ms (lazy loading)', 'English, Hindi and Spanish', 'Sign up / log in', 'Favourites list'],
     features: [
       'Movie suggestions from a search like "funny movies" (OpenAI API)',
@@ -271,6 +274,7 @@ export const projects: Project[] = [
   {
     id: 'ecommerce-delivery',
     kind: 'personal',
+    myRole: 'Sole developer - I planned, designed and built every feature end to end on my own.',
     name: 'Ecommerce Delivery Webapp',
     title: 'Ecommerce Delivery Webapp',
     short: 'Ecommerce Delivery',
@@ -298,6 +302,7 @@ export const projects: Project[] = [
   {
     id: 'cinehub',
     kind: 'personal',
+    myRole: 'Sole developer - I planned, designed and built every feature end to end on my own.',
     name: 'CineHub',
     title: 'CineHub',
     short: 'CineHub',
@@ -323,12 +328,13 @@ export const projects: Project[] = [
   {
     id: 'image-analyzer',
     kind: 'personal',
+    myRole: 'Sole developer - I planned, designed and built every feature end to end on my own.',
     name: 'Image Analyzer',
     title: 'Image Analyzer',
     short: 'Image Analyzer',
     subtitle: 'In-Browser Image Recognition',
     category: 'Machine Learning / Front-End',
-    owner: 'Personal project · July 2023',
+    owner: 'Personal project · January 2023',
     desc: 'Upload an image or paste its URL and the app detects what is in it and shows the analysed data, using a TensorFlow MobileNet model. Uploaded images are saved locally so they can be picked and analysed again, and on mobile you can take a photo with the camera. Fully responsive.',
     caps: ['Upload an image or paste a URL', 'Automatic detection with TensorFlow', 'History of analysed images', 'Camera upload on mobile', 'Fully responsive'],
     features: [
