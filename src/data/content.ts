@@ -415,10 +415,10 @@ export const projects: Project[] = [
     name: 'AI-Powered Healthcare Platform',
     title: 'AI-Powered Healthcare Platform',
     short: 'Healthcare Platform',
-    category: 'Healthcare / Generative AI',
+    category: 'Healthcare SaaS / Generative AI',
     org: 'Professional experience · product development at Medici',
     owner: 'Professional experience · product development at Medici',
-    desc: 'An AI-powered healthcare platform designed to streamline clinical consultations, patient intake, treatment-plan generation, physician review, and pharmacy fulfillment.',
+    desc: 'An AI-powered healthcare SaaS platform designed to streamline clinical consultations, patient intake, treatment-plan generation, physician review, and pharmacy fulfillment.',
     caps: ['AI-powered clinical intake', 'AI-assisted treatment plans', 'Physician review workflows', 'Patient approval & checkout', 'Secure patient messaging', 'Pharmacy fulfillment', 'Payment & shipping integrations'],
     features: ['AI-powered clinical intake', 'AI-assisted treatment-plan generation', 'Physician review workflows', 'Clinical override for escalated intakes', 'Patient approval and checkout', 'Secure patient messaging', 'Scheduled protocol check-ins', 'Renewal, reorder and re-intake flows', 'Pharmacy fulfillment', 'Payment and shipping integrations'],
     tags: ['Next.js', 'React', 'TypeScript', 'Bun', 'Hono', 'OpenAI', 'Anthropic Claude', 'AWS Bedrock', 'Vercel AI SDK', 'Supabase', 'Drizzle ORM', 'Postgres'],
@@ -493,6 +493,10 @@ export const whyHireMe: { title: string; text: string }[] = [
     text: 'LLM agents, tool calling and RAG pipelines with OpenAI, Claude and AWS Bedrock - running inside a live healthcare platform.',
   },
   {
+    title: 'SaaS product experience',
+    text: 'Building Medici, a live AI healthcare SaaS - patient and physician apps, checkout, renewals and fulfilment, shipped to real users and improved every release.',
+  },
+  {
     title: 'Real-time expertise',
     text: 'Chat, voice and video calls built with Socket.IO and WebRTC - fast, event-driven and reliable under load.',
   },
@@ -507,9 +511,5 @@ export const whyHireMe: { title: string; text: string }[] = [
   {
     title: 'Integrations that handle real stakes',
     text: 'Payments, pharmacy and shipping APIs with webhooks, retries and reconciliation - where mistakes cost money.',
-  },
-  {
-    title: 'Built for reliability',
-    text: 'Durable job queues with claim, retry and dead-letter, type-safe code end to end, and Dockerised AWS deploys.',
   },
 ];

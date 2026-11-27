@@ -19,11 +19,14 @@ export default function Projects() {
             </Lead>
           </div>
           <div className="reveal md:col-span-4 md:text-right">
-            <p className="m-0 font-mono text-xs leading-loose tracking-[0.14em] text-zinc-400 uppercase">
-              {String(personalProjects.length).padStart(2, '0')} personal project{personalProjects.length === 1 ? '' : 's'}
+            {/* Sits over the bright accretion disk - bigger, brighter text with a dark halo so it stays readable. */}
+            <p className="m-0 font-mono text-[15px] leading-[2.1] font-medium tracking-[0.12em] text-zinc-100 uppercase [text-shadow:0_0_2px_rgb(var(--ink-rgb)),0_0_8px_rgb(var(--ink-rgb)/0.95),0_0_18px_rgb(var(--ink-rgb)/0.9)]">
+              <span className="text-gold">{String(personalProjects.length).padStart(2, '0')}</span> personal project
+              {personalProjects.length === 1 ? '' : 's'}
               <br />
-              <a href="#experience" className="no-underline transition-colors hover:text-gold">
-                {String(atWork).padStart(2, '0')} more under experience ↑
+              <a href="#experience" className="text-zinc-100 underline decoration-gold/60 underline-offset-[6px] transition-colors hover:text-gold">
+                <span className="text-gold">{String(atWork).padStart(2, '0')}</span>
+                {' '}more under experience ↑
               </a>
             </p>
           </div>

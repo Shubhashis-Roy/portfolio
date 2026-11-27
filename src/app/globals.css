@@ -45,6 +45,7 @@
   --animate-cue: cue 2.4s ease-in-out infinite;
   --animate-mfade: mfade 0.45s ease both;
   --animate-mrise: mrise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-caret: caret-blink 1s steps(1) infinite;
 
   @keyframes cue {
     0% { transform: scaleY(0); transform-origin: top; }
@@ -52,6 +53,7 @@
     51% { transform-origin: bottom; }
     100% { transform: scaleY(0); transform-origin: bottom; }
   }
+  @keyframes caret-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
   @keyframes mfade { from { opacity: 0; } to { opacity: 1; } }
   @keyframes mrise {
     from { opacity: 0; transform: translateY(48px) scale(0.98); }

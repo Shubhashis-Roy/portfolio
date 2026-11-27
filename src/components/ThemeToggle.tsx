@@ -1,13 +1,14 @@
 'use client';
 
 import { useSyncExternalStore } from 'react';
-import { Moon, Sun } from 'lucide-react';
+import { Sparkles, Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { THEME_STORAGE_KEY, THEMES, type ThemeName } from '@/galaxy/palette';
 
+/** Space names that hint at each look: gold black hole = Supernova, violet black hole = Nebula. */
 const LABELS: Record<ThemeName, { label: string; Icon: typeof Sun }> = {
-  normal: { label: 'Normal', Icon: Sun },
-  dark: { label: 'Dark', Icon: Moon },
+  normal: { label: 'Supernova', Icon: Sun },
+  dark: { label: 'Nebula', Icon: Sparkles },
 };
 
 function subscribe(onChange: () => void) {
@@ -27,7 +28,7 @@ function setTheme(theme: ThemeName) {
   }
 }
 
-/** Segmented "Normal / Dark" theme switch shown in the nav. */
+/** Segmented "Supernova / Nebula" theme switch shown in the nav. */
 export default function ThemeToggle({ className }: { className?: string }) {
   const theme = useSyncExternalStore(subscribe, getTheme, getServerTheme);
   return (

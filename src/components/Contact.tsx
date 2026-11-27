@@ -5,7 +5,9 @@ import { Container, Eyebrow, Lead } from './primitives';
 import ResumeButton from './ResumeButton';
 import CopyButton from './CopyButton';
 
-const linkClass = 'font-mono text-xs tracking-[0.14em] text-zinc-400 uppercase no-underline transition-colors hover:text-gold';
+/** Pill-shaped contact links: bigger, brighter text on a dark glass chip so they stay readable over the planet/black hole. */
+const linkClass =
+  'inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-black/45 px-5 py-2.5 font-mono text-sm font-medium tracking-[0.12em] text-zinc-100 uppercase no-underline backdrop-blur-md transition-colors hover:border-gold/60 hover:text-gold';
 
 function Social({ url, label }: { url: string; label: string }) {
   return url ? (
@@ -50,13 +52,13 @@ export default function Contact() {
           </div>
           <ResumeButton icon={false} />
         </div>
-        <div className="reveal mt-10 flex flex-wrap items-center justify-center gap-7">
+        <div className="reveal mt-10 flex flex-wrap items-center justify-center gap-3.5">
           <Social url={profile.linkedin} label="LinkedIn" />
           <Social url={profile.github} label="GitHub" />
           <Social url={whatsappUrl} label="WhatsApp" />
           <span className="inline-flex items-center gap-2.5">
             <a href={`tel:${profile.phone.replace(/\s/g, '')}`} className={linkClass}>{profile.phone}</a>
-            <CopyButton value={profile.phone} label="phone number" className="size-8 [&_svg]:size-3.5" />
+            <CopyButton value={profile.phone} label="phone number" className="size-[42px] [&_svg]:size-4" />
           </span>
         </div>
       </Container>
