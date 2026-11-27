@@ -3,13 +3,25 @@ import { profile } from '@/data/content';
 import { THEME_STORAGE_KEY } from '@/galaxy/palette';
 import './globals.css';
 
+/**
+ * Public URL of the site, used for absolute og:url / link-preview URLs.
+ * On Vercel, VERCEL_PROJECT_PRODUCTION_URL is set automatically (and follows a custom domain once added).
+ */
+const siteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  : 'http://localhost:3000';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+  alternates: { canonical: '/' },
   title: `${profile.name} - ${profile.role}`,
   description: `${profile.name} - ${profile.role} building scalable web applications, intelligent AI systems and real-time digital products.`,
   openGraph: {
     title: `${profile.name} - ${profile.role}`,
     description: 'Engineering intelligent digital experiences.',
     type: 'website',
+    url: '/',
+    siteName: profile.name,
   },
   icons: { icon: '/favicon.svg' },
 };
