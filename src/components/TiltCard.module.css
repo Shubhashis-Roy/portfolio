@@ -2,7 +2,7 @@
  * From Uiverse.io by Smit-Prajapati - https://uiverse.io/Smit-Prajapati/smart-liger-5
  * MIT License, Copyright (c) Smit-Prajapati (Smit Prajapati)
  *
- * Adapted for the Skills section: same 3D tilt, glass layer, staggered circle stack and
+ * Adapted for the Skills and "Why hire me" sections: same 3D tilt, glass layer, staggered circle stack and
  * pop-out elements, recoloured to the site's gold/ember tokens (they follow the active theme),
  * scoped as a CSS Module, and sized to its content instead of a fixed 290x300 box.
  */
@@ -47,6 +47,12 @@
   padding: 100px 30px 0px 30px;
   transform-style: preserve-3d;
   transform: translate3d(0, 0, 26px);
+}
+
+/* Text-only cards (no chips) have longer titles, so they start below the 170px circle stack
+   instead of beside it, where the circles would cover the end of the title. */
+.contentClear {
+  padding-top: 196px;
 }
 
 .title {
