@@ -1,6 +1,6 @@
 import { experience, profile, projectById, type ProjectId } from '@/data/content';
 import { cn } from '@/lib/utils';
-import { Caps, Container, Dot, Eyebrow, Heading2, Lead, Section, Tags } from './primitives';
+import { Caps, Container, Eyebrow, Heading2, Lead, Section, Tags } from './primitives';
 import { Description, Preview, ProjectActions, ProjectMeta, ProjectTitle } from './project-parts';
 
 /** A product built in a role, shown in full under that role's summary. */
@@ -54,7 +54,6 @@ export default function Experience() {
                   )}
                   <div className="min-w-0">
                     <p className="m-0 font-display text-[34px] leading-[1.1] font-semibold tracking-[-0.03em]">
-                      {x.current && <Dot />}
                       {x.company}
                     </p>
                     <div className="mt-3 font-mono text-xs leading-[1.9] tracking-[0.14em] text-zinc-400 uppercase">
