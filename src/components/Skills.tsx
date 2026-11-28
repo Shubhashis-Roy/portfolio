@@ -1,6 +1,6 @@
 import { skills } from '@/data/content';
-import { Card } from '@/components/ui/card';
-import { Container, Eyebrow, Heading2, Lead, Mono, Section, Tags } from './primitives';
+import { Container, Eyebrow, Heading2, Lead, Section } from './primitives';
+import SkillCard from './SkillCard';
 
 export default function Skills() {
   return (
@@ -15,13 +15,16 @@ export default function Skills() {
             Technologies used across the projects above - grouped by where they sit in the product.
           </Lead>
         </div>
-        <div className="mt-16 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-6">
+        <div className="mt-16 grid grid-cols-1 gap-x-6 gap-y-10 md:grid-cols-2 lg:grid-cols-6">
           {skills.map((s, i) => (
             // 5 groups: three across on the first row, two wider ones below.
-            <Card key={s.group} className={`reveal ${i < 3 ? 'lg:col-span-2' : 'lg:col-span-3'} ${i === skills.length - 1 && skills.length % 2 ? 'md:col-span-2' : ''}`}>
-              <Mono tone="gold">{s.group}</Mono>
-              <Tags items={s.items} className="mt-5" />
-            </Card>
+            <SkillCard
+              key={s.group}
+              group={s.group}
+              items={s.items}
+              index={i}
+              className={`reveal ${i < 3 ? 'lg:col-span-2' : 'lg:col-span-3'} ${i === skills.length - 1 && skills.length % 2 ? 'md:col-span-2' : ''}`}
+            />
           ))}
         </div>
       </Container>

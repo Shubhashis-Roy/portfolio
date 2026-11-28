@@ -1,0 +1,232 @@
+/*
+ * From Uiverse.io by Smit-Prajapati - https://uiverse.io/Smit-Prajapati/smart-liger-5
+ * MIT License, Copyright (c) Smit-Prajapati (Smit Prajapati)
+ *
+ * Adapted for the Skills section: same 3D tilt, glass layer, staggered circle stack and
+ * pop-out elements, recoloured to the site's gold/ember tokens (they follow the active theme),
+ * scoped as a CSS Module, and sized to its content instead of a fixed 290x300 box.
+ */
+
+.parent {
+  height: 100%;
+  min-height: 300px;
+  perspective: 1000px;
+}
+
+.card {
+  position: relative;
+  height: 100%;
+  min-height: inherit;
+  display: flex;
+  flex-direction: column;
+  border-radius: 50px;
+  background: linear-gradient(135deg, rgb(var(--gold-rgb) / 0.55) 0%, rgb(var(--ember-rgb) / 0.35) 100%);
+  transition: all 0.5s ease-in-out;
+  transform-style: preserve-3d;
+  box-shadow:
+    rgb(0 0 0 / 0) 40px 50px 25px -40px,
+    rgb(0 0 0 / 0.35) 0px 25px 25px -5px;
+}
+
+.glass {
+  transform-style: preserve-3d;
+  position: absolute;
+  inset: 8px;
+  border-radius: 55px;
+  border-top-right-radius: 100%;
+  background: linear-gradient(0deg, rgb(var(--panel-rgb) / 0.82) 0%, rgb(var(--panel-rgb) / 0.95) 100%);
+  transform: translate3d(0px, 0px, 25px);
+  border-left: 1px solid rgb(var(--gold-rgb) / 0.55);
+  border-bottom: 1px solid rgb(var(--gold-rgb) / 0.55);
+  transition: all 0.5s ease-in-out;
+}
+
+.content {
+  position: relative;
+  flex: 1;
+  padding: 100px 30px 0px 30px;
+  transform-style: preserve-3d;
+  transform: translate3d(0, 0, 26px);
+}
+
+.title {
+  display: block;
+  color: rgb(var(--gold-rgb));
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+
+.text {
+  display: block;
+  color: rgb(255 255 255 / 0.62);
+  font-size: 15px;
+  margin-top: 8px;
+}
+
+/* Skill chips: they pop out of the card on hover, one after another (like the original's buttons). */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+  transform-style: preserve-3d;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 11px;
+  border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background: rgb(var(--ink-rgb) / 0.85);
+  color: rgb(228 228 231);
+  font-size: 12.5px;
+  white-space: nowrap;
+  box-shadow: rgb(0 0 0 / 0.5) 0px 7px 5px -5px;
+  transition:
+    transform 0.2s ease-in-out var(--delay, 0s),
+    box-shadow 0.2s ease-in-out var(--delay, 0s),
+    color 0.2s,
+    border-color 0.2s,
+    background-color 0.2s;
+}
+
+.tag:hover {
+  color: rgb(var(--ink-rgb));
+  border-color: rgb(var(--gold-rgb));
+  background: rgb(var(--gold-rgb));
+}
+
+.bottom {
+  position: relative;
+  padding: 22px 30px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transform-style: preserve-3d;
+  transform: translate3d(0, 0, 26px);
+}
+
+.count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.45);
+}
+
+.index {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: rgb(var(--gold-rgb));
+  transition: all 0.2s ease-in-out;
+}
+
+.parent:hover .index {
+  transform: translate3d(0, 0, 10px);
+}
+
+.logo {
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform-style: preserve-3d;
+}
+
+.circle {
+  display: block;
+  position: absolute;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  top: 0;
+  right: 0;
+  box-shadow: rgb(0 0 0 / 0.3) -10px 10px 20px 0px;
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  background: rgb(var(--gold-rgb) / 0.16);
+  transition: all 0.5s ease-in-out;
+}
+
+.circle1 {
+  width: 170px;
+  transform: translate3d(0, 0, 20px);
+  top: 8px;
+  right: 8px;
+}
+
+.circle2 {
+  width: 140px;
+  transform: translate3d(0, 0, 40px);
+  top: 10px;
+  right: 10px;
+  -webkit-backdrop-filter: blur(1px);
+  backdrop-filter: blur(1px);
+  transition-delay: 0.4s;
+}
+
+.circle3 {
+  width: 110px;
+  transform: translate3d(0, 0, 60px);
+  top: 17px;
+  right: 17px;
+  transition-delay: 0.8s;
+}
+
+.circle4 {
+  width: 80px;
+  transform: translate3d(0, 0, 80px);
+  top: 23px;
+  right: 23px;
+  transition-delay: 1.2s;
+}
+
+.circle5 {
+  width: 50px;
+  transform: translate3d(0, 0, 100px);
+  top: 30px;
+  right: 30px;
+  display: grid;
+  place-content: center;
+  background: rgb(var(--gold-rgb) / 0.9);
+  transition-delay: 1.6s;
+}
+
+.circle5 svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: rgb(var(--ink-rgb));
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.parent:hover .card {
+  transform: rotate3d(1, 1, 0, 30deg);
+  box-shadow:
+    rgb(0 0 0 / 0.45) 30px 50px 25px -40px,
+    rgb(var(--gold-rgb) / 0.12) 0px 25px 30px 0px;
+}
+
+.parent:hover .tag {
+  transform: translate3d(0, 0, 50px);
+  box-shadow: rgb(0 0 0 / 0.35) -5px 20px 10px 0px;
+}
+
+.parent:hover .circle2 { transform: translate3d(0, 0, 60px); }
+.parent:hover .circle3 { transform: translate3d(0, 0, 80px); }
+.parent:hover .circle4 { transform: translate3d(0, 0, 100px); }
+.parent:hover .circle5 { transform: translate3d(0, 0, 120px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .tag,
+  .circle {
+    transition: none;
+  }
+  .parent:hover .card { transform: none; }
+}
